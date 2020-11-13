@@ -33,16 +33,28 @@ let draw_poly r =
   Graphics.lineto x0 y0;
   Graphics.moveto a b;;
 
+  (* val draw_obstacles : Point array array-> unit = <fun> *)
+let draw_obstacles r =
+  for i = 1 to (Array.length r)-1 do
+  let obsi = r.(i) in draw_poly obsi
+  done;
+  
 (* creating the graphics window*)
 Graphics.open_graph " 300x300";;
-(* let f x = x + 1;;
-for i = 0 to 200 do
-  plot i (f i) *)
+(* Plotting a *basically* smol triangle  *)
 let pt1 = {x = 0.; y = 0.}
 let pt2 = {x = 133.; y = 0.}
 let pt3 = {x = 0.; y = 111.}
 let polyg = [| pt1; pt2; pt3 |];;
-draw_poly polyg ;;
+
+let pt11 = {x = 133.; y = 0.}
+let pt21 = {x = 0.; y = 111.}
+let pt31 = {x = 133.; y = 133.}
+let polyg1 = [| pt1; pt2; pt3 |];;
+
+let obstacles = [| polyg; polyg1 |];;
+
+draw_obstacles obstacles;;
 
 (* Runing user interface loop *)
 interactive ();;
