@@ -37,7 +37,7 @@ let draw_poly r =
 let draw_obstacles r =
   for i = 1 to (Array.length r)-1 do
   let obsi = r.(i) in draw_poly obsi
-  done;
+  done;;
   
 (* creating the graphics window*)
 Graphics.open_graph " 300x300";;
