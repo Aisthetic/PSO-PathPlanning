@@ -38,9 +38,9 @@ Graphics.open_graph " 300x300";;
 (* let f x = x + 1;;
 for i = 0 to 200 do
   plot i (f i) *)
-let pt1 = {x = 1.; y = 1.}
-let pt2 = {x = 1.; y = 2.}
-let pt3 = {x = 2.; y = 1.}
+let pt1 = {x = 0.; y = 0.}
+let pt2 = {x = 133.; y = 0.}
+let pt3 = {x = 0.; y = 111.}
 let polyg = [| pt1; pt2; pt3 |];;
 draw_poly polyg ;;
 
