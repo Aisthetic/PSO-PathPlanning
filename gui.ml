@@ -63,8 +63,6 @@ let create obstacles path =
   Graphics.open_graph " 300x300";
   (* Plotting a *basically* smol triangle  *)
 
-  
-
   draw_obstacles obstacles;
   draw_path path;
 
