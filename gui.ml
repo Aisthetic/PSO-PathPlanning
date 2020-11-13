@@ -53,7 +53,7 @@ let draw_poly r =
 
   (* val draw_obstacles : Point array array-> unit = <fun> *)
 let draw_obstacles r =
-  for i = 1 to (Array.length r)-1 do
+  for i = 0 to (Array.length r)-1 do
   let obsi = r.(i) in draw_poly obsi
   done;;
   
