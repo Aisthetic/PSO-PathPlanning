@@ -50,7 +50,7 @@ let polyg = [| pt1; pt2; pt3 |];;
 let pt11 = {x = 133.; y = 0.}
 let pt21 = {x = 0.; y = 111.}
 let pt31 = {x = 133.; y = 133.}
-let polyg1 = [| pt1; pt2; pt3 |];;
+let polyg1 = [| pt11; pt21; pt31 |];;
 
 let obstacles = [| polyg; polyg1 |];;
 
