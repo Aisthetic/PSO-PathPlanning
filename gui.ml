@@ -6,7 +6,7 @@
 
 open Graphics;;
 (* open Geometry;; *)
-(* En attendant que Geometr est debug par caro *)
+(* En attendant que Geometry est debug par caro *)
 type point = {x : float; y : float}
 
 let path_color = Graphics.rgb 255 0 0;; (* red *)
@@ -56,33 +56,19 @@ let draw_obstacles r =
   for i = 0 to (Array.length r)-1 do
   let obsi = r.(i) in draw_poly obsi
   done;;
+
+  (* creates a graphics window with it's main loop*)
+let create obstacles path = 
+  (* creating the graphics window*)
+  Graphics.open_graph " 300x300";
+  (* Plotting a *basically* smol triangle  *)
+
   
-(* creating the graphics window*)
-Graphics.open_graph " 300x300";;
-(* Plotting a *basically* smol triangle  *)
 
-let pt1 = {x = 200.; y = 200.}
-let pt2 = {x = 100.; y = 200.}
-let pt3 = {x = 200.; y = 100.}
-let polyg = [| pt1; pt2; pt3 |];;
+  draw_obstacles obstacles;
+  draw_path path;
 
-let pt11 = {x = 133.; y = 0.}
-let pt21 = {x = 0.; y = 111.}
-let pt31 = {x = 133.; y = 133.}
-let polyg1 = [| pt11; pt21; pt31 |];;
-
-let pt111 = {x = 0.; y = 0.}
-let pt211 = {x = 100.; y = 111.}
-let pt311 = {x = 133.; y = 200.}
-
-let path = [| pt111; pt211; pt311 |];;
-
-let obstacles = [| polyg; polyg1 |];;
-
-draw_obstacles obstacles;;
-draw_path path;;
-
-(* Runing user interface loop *)
-interactive ();;
+  (* Runing user interface loop *)
+  interactive ();;
 
 
