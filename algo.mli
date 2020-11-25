@@ -9,8 +9,8 @@ val xmax : float 		(*Norme 1 max d'un point tournant autour du point de départ*
 
 type point = {x:float; y:float} 					(*Geometry*)
 type particule = {position: point array; 
-					vitesse: point array; 
-					meilleur: point array} 		(*Initialisation*)
+			vitesse: point array; 
+			meilleur: point array} 				(*Initialisation*)
 
 
 (*Fonctions qui doivent venir d'ailleurs*)
