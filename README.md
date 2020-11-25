@@ -1,5 +1,5 @@
 # PSO-Pathfinding
-Implement of the Particle Swarm Optimization algorithm  for finding a path in a dynamic environment. This project contains the algorithm implementation and its environment plus a user interface to visualize the solution(s).
+Implementation of the Particle Swarm Optimization algorithm  for finding a path in a dynamic environment. This project contains the algorithm implementation and its environment plus a user interface to visualize the solution(s).
 
 ## Installation
 
