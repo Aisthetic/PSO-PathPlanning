@@ -1,6 +1,4 @@
-(* This module contains the main path planning 
- * algorithm that can be called by other modules
-.*)
+(* This module contains the functions needed to generate a swarm and to display it *)
 
 
 
@@ -9,39 +7,31 @@ type particule = {position : point array; vitesse : point; best_pos : point arra
 
 
 
-(* les points mde départ et d'arrivée pas encore utilisés en fait *)
-let p_init = {x = 0.; y = 0.};;     
-let p_final = {x = 100.; y = 100.};;
 
-(* le nombre de points tournant *)
-let nb_pt = 3;;
-
-(* le nombre de particules désirées *)
-let d = 2;;
  
  (* génération de la nouvelle seed aléatoire *)
  Random.self_init ();;
 
-
+(* génère un point aléatoire avec p les coordonnées maximales en x et y *)
 let gen_point = fun p ->
 	{x = Random.float p.x; y = Random.float p.y};;
 
-(* gènère un array de max points  *)
-let generation = fun max->
+(* gènère un array de nb points *)
+let generation = fun nb p->
 	let rec rec_gen = fun particule increment ->
-		if increment = max then particule 
+		if increment = nb then particule 
 		else
-			rec_gen (Array.append particule [| gen_point p_final |]) (increment+1)
+			rec_gen (Array.append particule [| gen_point p |]) (increment+1)
 	in rec_gen [||] 0;;	
 
 (* génère un nombre d de particules *)
-let  gen_swarm = fun d max->
+let  gen_swarm = fun d nb p->
 	let rec rec_swarm = fun swarm increment ->
 		if increment = d then swarm
 		else
-			let pos_init = generation max in
-			rec_swarm (Array.append swarm [| {position = pos_init; vitesse = gen_point p_final; best_pos = pos_init} |]) (increment+1)
-	in rec_swarm [||] 0
+			let pos_init = generation nb p in
+			rec_swarm (Array.append swarm [| {position = pos_init; vitesse = gen_point p; best_pos = pos_init} |]) (increment+1)
+	in rec_swarm [||] 
 
 
 
@@ -67,5 +57,16 @@ let print_swarm = fun swarm ->
 	print_string "\n";;
 
 
-print_swarm (gen_swarm d nb_pt);;
+(* exemple *)
+
+(* point de coordonnées maximales *) 
+let p_final = {x = 100.; y = 100.};;
+
+(* le nombre de points tournant *)
+let nb_pt = 3;;
+
+(* le nombre de particules désirées *)
+let d = 2;;
+
+print_swarm (gen_swarm d nb_pt p_final);;
 
