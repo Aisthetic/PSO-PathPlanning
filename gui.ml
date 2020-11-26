@@ -9,11 +9,15 @@ open Graphics;;
 (* En attendant que Geometry est debug par caro *)
 type point = {x : float; y : float}
 
+(* local variables *)
 let path_color = Graphics.rgb 255 0 0;; (* red *)
 let obstacles_color = Graphics.rgb 0 255 0;;
 let initial_width = 600;; (* wight de la fen *)
 let initial_heigth = 800;; (* height de la fen *)
 let scale = 10.;; (* echelle utilisée *)
+let path_drawn = false;; (* flag to prevent drawing 2 paths at the same time*)
+let obstacles_drawn = false;; (* flag to prevent drawing 2 set of obstacles at the same time*)
+
 (* Creates a loop for the interface to keep running*)
 (* And catches keyboard evens *)
 let rec interactive () =
@@ -23,16 +27,26 @@ let rec interactive () =
   else print_char event.key; print_newline (); interactive ();;
 
 (* actualisation des données - si nécessaire *)
-(* let refresh () = () *)
+let refresh () = 
+    Graphics.clear_graph ();
+    draw_obstacles obstacles;
+    draw_path path
+(*--------functions used to set data at any time of the app execution------*)
+let set_obstacles obs = 
+  obstacles = obs;
+  refresh ()
 
- (*------- User Interface Utility Functions -------*)
+let set_path pth = 
+  path = pth;
+  refresh ()
+(*------- User Interface Utility Functions -------*)
  
 let draw_path r = 
   (* On change de couleur pour tracer le chemin*)
   Graphics.set_color path_color;
   let (a,b) = Graphics.current_point() in
   (* On trace une ligne entre les points du tableau*)
-  let pt0 = r.(0) in (* On se positionne au premier point du tableau*)
+  let pt0 = r.(0) in (* On se positionne au premier point du tableau *)
   let x0 = int_of_float (pt0.x *. scale) in 
   let y0 = int_of_float (pt0.y *. scale) in
   Graphics.moveto x0 y0; 
@@ -41,7 +55,8 @@ let draw_path r =
   let xi = int_of_float (pti.x *. scale) in
   let yi = int_of_float (pti.y *. scale) in Graphics.lineto xi  yi
   done;
-  Graphics.moveto a b;; (* On se positionne au point sauvegardé*)
+  path_drawn = true; 
+  Graphics.moveto a b;; (* On se positionne au point sauvegarder *)
 
 (* val draw_poly : Point array -> unit = <fun> *)
 let draw_poly r =
@@ -64,14 +79,22 @@ let draw_poly r =
 let draw_obstacles r =
   for i = 0 to (Array.length r)-1 do
   let obsi = r.(i) in draw_poly obsi
-  done;;
-
+  done;
+  obstacles_drawn = true;;
   (* creates a graphics window with it's main loop*)
-let create obstacles path = 
+let create () = 
   (* creating the graphics window*)
   Graphics.open_graph (Printf.sprintf " %dx%d" initial_heigth initial_width);
-  (* Plotting a *basically* smol triangle  *)
+  (* Runing user interface loop *)
+  interactive ();;
+let create _obstacles _path = 
+  (* creating the graphics window*)
+  Graphics.open_graph (Printf.sprintf " %dx%d" initial_heigth initial_width);
+  (* setting local data *)
+  obstacles = _obstacles;
+  path = _path;
 
+  (* Plotting figures*)
   draw_obstacles obstacles;
   draw_path path;
 
