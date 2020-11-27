@@ -2,8 +2,8 @@
 
 
 
-type point = {x : float; y : float};; (* définit dans géometry et à importer si besoin *)
-type particule = {position : point array; vitesse : point; best_pos : point array};;
+
+type particule = {position : float array; vitesse : float array; best_pos : float array};;
 
 
 
@@ -12,44 +12,44 @@ type particule = {position : point array; vitesse : point; best_pos : point arra
  (* génération de la nouvelle seed aléatoire *)
  Random.self_init ();;
 
-(* génère un point aléatoire avec p les coordonnées maximales en x et y *)
-let gen_point = fun p ->
-	{x = Random.float p.x; y = Random.float p.y};;
+(* génère un point aléatoire de dimanesion k avec p les coordonnées maximales *)
+let gen_point = fun k p ->
+	let rec rec_gen_point = fun point dimension ->
+		if dimension = k then point
+		else
+			rec_gen_point (Array.append point [| Random.float p.(dimension) |]) (dimension +1)
+	in rec_gen_point [||] 0;;
+	(*{x = Random.float p.x; y = Random.float p.y};;*)
 
-(* gènère un array de nb points *)
-let generation = fun nb p->
+(* gènère un array de nb points de dimension k avec p les limites *)
+let generation = fun nb k p->
 	let rec rec_gen = fun particule increment ->
 		if increment = nb then particule 
 		else
-			rec_gen (Array.append particule [| gen_point p |]) (increment+1)
+			rec_gen (Array.append particule  (gen_point k p)) (increment+1)
 	in rec_gen [||] 0;;	
 
-(* génère un nombre d de particules *)
-let  gen_swarm = fun d nb p->
+(* génère un nombre d de particules avec nb points de dimension k et p les limites*)
+let  gen_swarm = fun d nb k p ->
 	let rec rec_swarm = fun swarm increment ->
 		if increment = d then swarm
 		else
-			let pos_init = generation nb p in
-			rec_swarm (Array.append swarm [| {position = pos_init; vitesse = gen_point p; best_pos = pos_init} |]) (increment+1)
-	in rec_swarm [||] 
+			let pos_init = generation nb k p in
+			rec_swarm (Array.append swarm [| {position = pos_init; vitesse = generation nb k p; best_pos = pos_init} |]) (increment+1)
+	in rec_swarm [||] 0;;
 
 
 
 (* AFFICHAGE *)
 
-(* permet l'affichage d'un point *)
-let print_point = fun p ->
-	print_string "(" ; print_float p.x ; print_string ", " ; print_float p.y ; print_string ")" ; print_string " ";;	
-
-
-(* permet l'affichage d'une liste de points *)
-let print_array = fun liste ->
-	Array.iter print_point liste;
+(* permet l'affichage de coordonnees en float *)
+let print_array = fun fl ->
+	print_float fl;
 	print_string "\n";;
 
 (* permet l'affichage d'une particule *)
 let print_particule = fun particule ->
-	print_string "\nposition :\n" ; print_array particule.position ; print_string "vitesse : \n" ; print_point particule.vitesse ; print_string "\nmeilleure position : \n" ; print_array particule.best_pos ; print_string " ";;
+	print_string "\nposition :\n" ; Array.iter print_array particule.position ; print_string "vitesse :\n" ; Array.iter print_array particule.vitesse ; print_string "meilleure position : \n" ; Array.iter print_array particule.best_pos ; print_string " ";;
 
 (* permet l'affichage de l'ensemble des particules *)
 let print_swarm = fun swarm ->
@@ -57,16 +57,5 @@ let print_swarm = fun swarm ->
 	print_string "\n";;
 
 
-(* exemple *)
 
-(* point de coordonnées maximales *) 
-let p_final = {x = 100.; y = 100.};;
-
-(* le nombre de points tournant *)
-let nb_pt = 3;;
-
-(* le nombre de particules désirées *)
-let d = 2;;
-
-print_swarm (gen_swarm d nb_pt p_final);;
 
