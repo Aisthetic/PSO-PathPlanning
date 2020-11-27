@@ -1,9 +1,9 @@
 # PSO-Pathfinding
-Implementation of the Particle Swarm Optimization algorithm  for finding a path in a dynamic environment. This project contains the algorithm implementation and its environment plus a user interface to visualize the solution(s).
+Implementation of the Particle Swarm Optimization algorithm  for finding a path in a dynamic environment. This project contains the algorithm implementation and its environment plus an user interface to visualize the solution(s).
 
 ## Installation
 
-This project require the ocaml environment to be run.
+This project requires the ocaml environment to be run.
 
 ```bash
 apt-get install ocaml opam ocamlbuild
