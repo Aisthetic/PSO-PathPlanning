@@ -78,7 +78,7 @@ let croise_obstacle = fun seg obst ->
 	let rec f_aux = fun lst test -> (*On regarde si le segment croise un de ceux composant l'obstacle*)
 		match lst with
 			|[] -> test
-			|[s] -> test || (croise_obstacle seg s)
+			|[s] -> test || (croise_segment seg s)
 			|t::q when test -> test
 			|t::q when not test -> f_aux q (croise_segment seg t)
 			|_ -> failwith "pas un obstacle"
