@@ -80,7 +80,7 @@ let croise_obstacle = fun seg obst ->
 		match lst with
 			|[] -> test
 			|t::q when test -> test
-			|t::q -> let a,b = t in Printf.printf "%f\n" a.x ; f_aux q (croise_segment seg t)
+			|t::q -> f_aux q (croise_segment seg t)
 	in f_aux lst_segments false;;
 
 (* Fonction qui indique si un segment de la trajectoire traverse un des obstacles *)
