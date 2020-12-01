@@ -12,16 +12,17 @@ let distance = fun a b -> sqrt (((a.x -. b.x)**2.) +. ((a.y -. b.y)**2.));;
 			|[] -> acc
 			|(a,b)::q -> aux q (acc +. (distance a b))
 	in aux traj 0.;;
+
 ;; Juste pour pas avoir d'erreur, prendre fonction Caro*)
 
-let fonction_objectif = fun traj ->
+(*let fonction_objectif = fun traj ->
 	let n = Array.length traj in
 	let d = ref 0. in 
 	for i = 0 to (n-1) do 
 		let a,b = traj.(i) in
 		d := !d +. (distance a b)
 	done; 
-	!d;;
+	!d;;*)
 
 let mult_point pt coeff = {x=coeff *. pt.x; y=coeff *. pt.y};;
 
@@ -78,10 +79,8 @@ let croise_obstacle = fun seg obst ->
 	let rec f_aux = fun lst test -> (*On regarde si le segment croise un de ceux composant l'obstacle*)
 		match lst with
 			|[] -> test
-			|[s] -> test || (croise_segment seg s)
 			|t::q when test -> test
-			|t::q when not test -> f_aux q (croise_segment seg t)
-			|_ -> failwith "pas un obstacle"
+			|t::q -> f_aux q (croise_segment seg t)
 	in f_aux lst_segments false;;
 
 (* Fonction qui indique si un segment de la trajectoire traverse un des obstacles *)
@@ -100,7 +99,7 @@ let trajectoire_ok = fun traj lst_obst ->
 	in 
 	let rec f_aux = fun lst_o traverse ->
 		match lst_o with
-			|[] -> traverse
+			|[] ->Printf.printf "Fin\n" ; traverse
 			|_ when traverse -> traverse
-			|t::q -> f_aux q (ok_pour_un traj_seg t false)
+			|t::q -> Printf.printf "seg\n" ; f_aux q (ok_pour_un traj_seg t false)
 	in not (f_aux lst_obst false);;
