@@ -31,7 +31,10 @@ let soustrait_points pt1 pt2 = {x=pt1.x -. pt2.x; y=pt1.y -. pt2.y};;
 let somme_points pt1 pt2 = {x=pt1.x +. pt2.x; y=pt1.y +. pt2.y};;
 
 (* Fonction qui donne les paramètres d'une droite connaissant deux de ses points *)
-let equation_droite = fun a b -> let m = (b.y -. a.y)/.(b.x -. a.x) in m, (a.y -. m *. a.x);;
+let equation_droite = fun a b -> 
+	if ((a.x -. b.x) < epsilon) then failwith "Droites verticale"
+	else
+		let m = (b.y -. a.y)/.(b.x -. a.x) in m, (a.y -. (m *. a.x));;
 
 (* Fonction qui donne les paramètres des droites formant le polygone *)
 let rec equation_obstacle = fun obst ->
@@ -51,27 +54,44 @@ let rec segmente_obstacle = fun obst ->
 let intersection_droites = fun d1 d2 -> 
 	let a1,b1 = d1 in
 	let a2,b2 = d2 in
-	let m1,q1 = equation_droite a1 b1 in (*Equation de d1*)
-	let m2,q2 = equation_droite a2 b2 in (*Equation de d2*)
-	let x_cross = (q2 -. q1)/.(m1 -. m2) in
-	{x=x_cross; y=m1 *. x_cross +. q1};;
+	if (((a1.x -. b1.x) < epsilon) && ((a2.x -. b2.x) < epsilon)) then failwith "Droites parallèles"
+	else
+		if ((a1.x -. b1.x) < epsilon) then begin
+				let x_cross = a1.x in
+				let m2,q2 = equation_droite a2 b2 in
+				{x = x_cross ; y = (m2 *. x_cross) +. q2}; 
+			end else
+				if ((a2.x -. b2.x) < epsilon) then begin
+						let x_cross = a2.x in 
+						let m1,q1 = equation_droite a1 b1 in
+						{x = x_cross ; y = (m1 *. x_cross) +. q1}; 
+					end else 
+						let m1,q1 = equation_droite a1 b1 in (*Equation de d1*)
+						let m2,q2 = equation_droite a2 b2 in (*Equation de d2*)
+						let x_cross = (q2 -. q1)/.(m1 -. m2) in
+						{x = x_cross ; y = (m1 *. x_cross) +. q1};
+;;
 
 (* Fonction qui indique si un point se situe dans un segment *)
 let pt_dans_seg = fun pt seg ->
 	let classe_coord = fun xa xb -> if (xa < xb) then xa,xb else xb,xa in (*Fonction qui donne les coordonnées de deux points dans l'ordre croissant*)
 	let a_seg,b_seg = seg in
-	let m,q = equation_droite a_seg b_seg in (*Equation de la droite associée au segment*)
-	let sur_droite = (m *. pt.x +. q -. pt.y < epsilon) in (*Le point se situe sur la droite ?*)
+	let sur_droite = 
+		if ((a_seg.x -. b_seg.x) < epsilon) then (a_seg.x -. pt.x < epsilon)
+		else
+			let m,q = equation_droite a_seg b_seg in (*Equation de la droite associée au segment*)
+			let res = m *. pt.x +. q -. pt.y in
+			(res < epsilon)(*Le point se situe sur la droite ?*)
+	in
 	let x_min, x_max = classe_coord a_seg.x b_seg.x in
-	let y_min, y_max = classe_coord a_seg.y b_seg.y in
 	let intra_h = ((pt.x <= x_max) && (pt.x >= x_min)) in (*Le point se situe horizontalement entre les deux points ?*)
-	let intra_v = ((pt.y <= y_max) && (pt.y >= y_min)) in (*Le point se situe verticalement entre les deux points ?*)
-	(sur_droite && intra_h && intra_v);;
+	(*let intra_v = ((pt.y <= y_max) && (pt.y >= y_min)) in Le point se situe verticalement entre les deux points ?*)
+	(sur_droite && intra_h);;
 
 (* Fonction qui indique si deux segments se croisent *)
 let croise_segment = fun s1 s2 ->
 	let pt_cross = intersection_droites s1 s2 in
-	(pt_dans_seg pt_cross s1) && (pt_dans_seg pt_cross s2) ;;(*2 segments se croisent si le point d'intersection des deux droites associées appartient aux deux segments*)
+	(pt_dans_seg pt_cross s1);;(*2 segments se croisent si le point d'intersection des deux droites associées appartient aux deux segments*)
 
 (* Fonction qui indique si un segment traverse un obstacle *)
 let croise_obstacle = fun seg obst ->
@@ -79,8 +99,8 @@ let croise_obstacle = fun seg obst ->
 	let rec f_aux = fun lst test -> (*On regarde si le segment croise un de ceux composant l'obstacle*)
 		match lst with
 			|[] -> test
-			|t::q when test -> test
-			|t::q -> f_aux q (croise_segment seg t)
+			|t::q when test ->  test
+			|t::q -> let tst = (croise_segment seg t) in f_aux q tst
 	in f_aux lst_segments false;;
 
 (* Fonction qui indique si un segment de la trajectoire traverse un des obstacles *)
@@ -94,12 +114,12 @@ let trajectoire_ok = fun traj lst_obst ->
 	let rec ok_pour_un = fun lst_traj obst test ->
 		match lst_traj with
 			|[] -> test
-			|_ when test -> test
+			|t::q when test -> test
 			|t::q -> ok_pour_un q obst (croise_obstacle t obst) 
 	in 
 	let rec f_aux = fun lst_o traverse ->
 		match lst_o with
-			|[] ->Printf.printf "Fin\n" ; traverse
+			|[] -> traverse
 			|_ when traverse -> traverse
-			|t::q -> Printf.printf "seg\n" ; f_aux q (ok_pour_un traj_seg t false)
+			|t::q -> f_aux q (ok_pour_un traj_seg t false)
 	in not (f_aux lst_obst false);;
