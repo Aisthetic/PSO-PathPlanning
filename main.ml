@@ -1,4 +1,5 @@
 open Gui
+open Geometrie
 
 let pt1 = {x = 20.; y = 20.};;
 let pt2 = {x = 10.; y = 20.};;

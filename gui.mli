@@ -1,4 +1,4 @@
-type point = {x : float; y : float}
+type point = Geometrie.point
 
 val draw_path : point array -> unit
 val draw_poly : point array -> unit

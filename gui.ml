@@ -5,9 +5,9 @@
 
 
 open Graphics;;
-(* open Geometry;; *)
+open Geometrie;;
 (* En attendant que Geometry est debug par caro *)
-type point = {x : float; y : float}
+type point = Geometrie.point
 
 (* local variables *)
 let path_color = Graphics.rgb 255 0 0;; (* red *)
