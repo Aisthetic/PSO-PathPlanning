@@ -58,7 +58,7 @@ let rec segmente_obstacle = fun obst ->
 let intersection_droites = fun d1 d2 -> 
 	let a1,b1 = d1 in
 	let a2,b2 = d2 in
-	if (((a1.x -. b1.x) < epsilon) && ((a2.x -. b2.x) < epsilon)) then raise DroitesParalleles;
+	if (((a1.x -. b1.x) < epsilon) && ((a2.x -. b2.x) < epsilon)) then raise DroitesParalleles
 	else
 		if ((a1.x -. b1.x) < epsilon) then begin
 				let x_cross = a1.x in
