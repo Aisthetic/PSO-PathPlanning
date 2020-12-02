@@ -12,33 +12,45 @@ end;;
 module Geometrie = struct
 	type point = {x : float; y : float}
 
-	type element = Point of point | Polygone of point list | Segment of point * point
+	type element = 
+		Point of point 
+		| Polygone of element list 
+		| Segment of point * point
 
-	(* Fonction qui donne les points composant un élément *)
-	let rec give_comp = fun elt ->
+		(* Fonction qui donne les points composant un élément *)
+	let give_pt = fun elt ->
 		match elt with
-			| Point p -> p
-			| Polygone t::q -> t::(give_comp Polygone q)
+			| Point(p) -> p
+			| _ -> failwith "pas un point"
+			
+	let rec give_poly = fun elt ->
+		match elt with
+			| Polygone(t::q) -> (give_pt t)::(give_poly Polygone(q))
+			| _ -> failwith "pas un polygone"
+			
+	let give_seg = fun elt ->
+		match elt with
 			| Segment(a,b) -> a,b
+			|_ -> failwith "pas un segment"		
 
 	(* Donne la différence acceptable entre deux flottants *)
-	let epsilon = 10**(-5)
+	let epsilon = 10.**(-5.)
 
 	(* Fonction qui donne la distance entre deux points *)
-	let distance = fun a b -> sqrt (((a.x -. b.x)**2.) + ((a.y -. b.y)**2.))
+	let distance = fun a b -> sqrt (((a.x -. b.x)**2.) +. ((a.y -. b.y)**2.))
 
 	(* Fonction qui donne les paramètres d'une droite connaissant deux de ses points *)
-	let equation_droite = fun a b -> let m = (b.y -. a.y)/.(b.x - a.x) in m, (a.y -. c *. a.x)
+	let equation_droite = fun a b -> let m = (b.y -. a.y)/.(b.x -. a.x) in m, (a.y -. m *. a.x)
 
 	(* Fonction qui donne les paramètres des droites formant le polygone *)
-	let equation_obstacle = fun obst -> let pt_lst = give_comp obst in
+	let equation_obstacle = fun obst -> let pt_lst = give_poly obst in
 		match pt_lst with
 			|[] -> []
 			|[p] -> []
 			|p1::p2::q -> (equation_droite p1 p2)::(equation_obstacle p2::q)
 
 	(* Fonction qui donne les segmenst composant le polygone *)
-	let segmente_obstacle = fun obst -> let pt_lst = give_comp obst in
+	let segmente_obstacle = fun obst -> let pt_lst = give_poly obst in
 		match pt_lst with
 			|[] -> []
 			|[p] -> []
@@ -46,8 +58,8 @@ module Geometrie = struct
 
 	(* Fonction qui donne le point d'intersection de deux droites *)
 	let intersection_droites = fun d1 d2 -> 
-		let a1,b1 = give_comp d1 in
-		let a2,b2 = give_comp d2 in
+		let a1,b1 = give_seg d1 in
+		let a2,b2 = give_seg d2 in
 		let m1,q1 = equation_droite a1 b1 in (*Equation de d1*)
 		let m2,q2 = equation_droite a2 b2 in (*Equation de d2*)
 		let x_cross = (q2 -. q1)/.(m1 -. m2) in
@@ -55,9 +67,9 @@ module Geometrie = struct
 
 	(* Fonction qui indique si un point se situe dans un segment *)
 	let pt_dans_seg = fun pt seg ->
-		let p = give_comp pt in 
+		let p = give_pt pt in 
 		let classe_coord = fun xa xb -> if (xa < xb) then xa,xb else xb,xa in (*Fonction qui donne les coordonnées de deux points dans l'ordre croissant*)
-		let a_seg,b_seg = give_comp seg in
+		let a_seg,b_seg = give_seg seg in
 		let m,q = equation_droite a_seg b_seg in (*Equation de la droite associée au segment*)
 		let sur_droite = (m *. p.x +. q -. p.y< epsilon) in (*Le point se situe sur la droite ?*)
 		let x_min, x_max = classe_coord a_seg.x, b_seg.x in
@@ -82,6 +94,7 @@ module Geometrie = struct
 		in f_aux lst_segments false
 
 	(* Fonction qui indique si un segment de la trajectoire traverse un des obstacles *)
+	let trajectoire_ok = fun traj lst_obst ->
 		let rec segmente_traj = fun trj -> match trj with
 			|[] -> []
 			|[p] -> []

@@ -1,17 +1,11 @@
-type point = { x : float; y : float; }
 type particule = {
-  position : point array;
-  vitesse : point;
-  best_pos : point array;
+  position : float array;
+  vitesse : float array;
+  best_pos : float array;
 }
-val p_init : point
-val p_final : point
-val nb_pt : int
-val d : int
-val gen_point : point -> point
-val generation : int -> point array
-val gen_swarm : int -> int -> particule array
-val print_point : point -> unit
-val print_array : point array -> unit
+val gen_point : int -> float array -> float array
+val generation : int -> int -> float array -> float array
+val gen_swarm : int -> int -> int -> float array -> particule array
+val print_array : float -> unit
 val print_particule : particule -> unit
 val print_swarm : particule array -> unit
