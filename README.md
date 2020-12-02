@@ -7,6 +7,9 @@ This project requires the ocaml environment to be run.
 
 ```bash
 apt-get install ocaml opam ocamlbuild
+opam init
+eval $(opam env)
+opam install ocamlfind
 ```
 
 ## Usage

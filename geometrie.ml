@@ -1,5 +1,9 @@
 type point = {x : float; y : float};;	
 
+exception DroitesParalleles;;
+
+exception DroiteVerticale;;
+
 (* Donne la différence acceptable entre deux flottants *)
 let epsilon = 10.**(-5.);;
 
@@ -32,7 +36,7 @@ let somme_points pt1 pt2 = {x=pt1.x +. pt2.x; y=pt1.y +. pt2.y};;
 
 (* Fonction qui donne les paramètres d'une droite connaissant deux de ses points *)
 let equation_droite = fun a b -> 
-	if ((a.x -. b.x) < epsilon) then failwith "Droites verticale"
+	if ((a.x -. b.x) < epsilon) then raise DroiteVerticale
 	else
 		let m = (b.y -. a.y)/.(b.x -. a.x) in m, (a.y -. (m *. a.x));;
 
@@ -54,7 +58,7 @@ let rec segmente_obstacle = fun obst ->
 let intersection_droites = fun d1 d2 -> 
 	let a1,b1 = d1 in
 	let a2,b2 = d2 in
-	if (((a1.x -. b1.x) < epsilon) && ((a2.x -. b2.x) < epsilon)) then failwith "Droites parallèles"
+	if (((a1.x -. b1.x) < epsilon) && ((a2.x -. b2.x) < epsilon)) then raise DroitesParalleles
 	else
 		if ((a1.x -. b1.x) < epsilon) then begin
 				let x_cross = a1.x in
@@ -90,8 +94,11 @@ let pt_dans_seg = fun pt seg ->
 
 (* Fonction qui indique si deux segments se croisent *)
 let croise_segment = fun s1 s2 ->
+	try 
 	let pt_cross = intersection_droites s1 s2 in
-	(pt_dans_seg pt_cross s1);;(*2 segments se croisent si le point d'intersection des deux droites associées appartient aux deux segments*)
+	(pt_dans_seg pt_cross s1);
+	with DroitesParalleles -> false
+;;(*2 segments se croisent si le point d'intersection des deux droites associées appartient aux deux segments*)
 
 (* Fonction qui indique si un segment traverse un obstacle *)
 let croise_obstacle = fun seg obst ->
