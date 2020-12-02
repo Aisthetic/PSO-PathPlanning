@@ -15,30 +15,6 @@ let obstacles_color = Graphics.rgb 0 255 0;;
 let initial_width = 600;; (* wight de la fen *)
 let initial_heigth = 800;; (* height de la fen *)
 let scale = 10.;; (* echelle utilisée *)
-let path_drawn = false;; (* flag to prevent drawing 2 paths at the same time*)
-let obstacles_drawn = false;; (* flag to prevent drawing 2 set of obstacles at the same time*)
-
-(* Creates a loop for the interface to keep running*)
-(* And catches keyboard evens *)
-let rec interactive () =
-  let event = wait_next_event [Key_pressed] in
-  if event.key == 'q' then exit 0 
-  (* refresh () ; *)
-  else print_char event.key; print_newline (); interactive ();;
-
-(* actualisation des données - si nécessaire *)
-let refresh () = 
-    Graphics.clear_graph ();
-    draw_obstacles obstacles;
-    draw_path path
-(*--------functions used to set data at any time of the app execution------*)
-let set_obstacles obs = 
-  obstacles = obs;
-  refresh ()
-
-let set_path pth = 
-  path = pth;
-  refresh ()
 (*------- User Interface Utility Functions -------*)
  
 let draw_path r = 
@@ -55,7 +31,6 @@ let draw_path r =
   let xi = int_of_float (pti.x *. scale) in
   let yi = int_of_float (pti.y *. scale) in Graphics.lineto xi  yi
   done;
-  path_drawn = true; 
   Graphics.moveto a b;; (* On se positionne au point sauvegarder *)
 
 (* val draw_poly : Point array -> unit = <fun> *)
@@ -79,21 +54,25 @@ let draw_poly r =
 let draw_obstacles r =
   for i = 0 to (Array.length r)-1 do
   let obsi = r.(i) in draw_poly obsi
-  done;
-  obstacles_drawn = true;;
-  (* creates a graphics window with it's main loop*)
+  done
+
+(* Creates a loop for the interface to keep running*)
+(* And catches keyboard evens *)
+let rec interactive () =
+  let event = wait_next_event [Key_pressed] in
+  if event.key == 'q' then exit 0 
+  else print_char event.key; print_newline (); interactive ();;
+
+(* creates a graphics window with it's main loop*)
 let create () = 
   (* creating the graphics window*)
   Graphics.open_graph (Printf.sprintf " %dx%d" initial_heigth initial_width);
   (* Runing user interface loop *)
   interactive ();;
-let create _obstacles _path = 
+
+let create obstacles path = 
   (* creating the graphics window*)
   Graphics.open_graph (Printf.sprintf " %dx%d" initial_heigth initial_width);
-  (* setting local data *)
-  obstacles = _obstacles;
-  path = _path;
-
   (* Plotting figures*)
   draw_obstacles obstacles;
   draw_path path;
@@ -101,4 +80,8 @@ let create _obstacles _path =
   (* Runing user interface loop *)
   interactive ();;
 
-
+(*--------functions used to set data at any time of the app execution------*)
+let set_data obstacles path = 
+  Graphics.clear_graph ();
+  draw_obstacles obstacles;
+  draw_path path;
