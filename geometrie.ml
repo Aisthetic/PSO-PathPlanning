@@ -110,7 +110,7 @@ let pt_dans_seg = fun pt seg ->
 let croise_segment = fun s1 s2 ->
 	try 
 	let pt_cross = intersection_droites s1 s2 in
-	(pt_dans_seg pt_cross s1);
+	(pt_dans_seg pt_cross s1) && (pt_dans_seg pt_cross s2);
 	with DroitesParalleles -> false
 ;;(*2 segments se croisent si le point d'intersection des deux droites associées appartient aux deux segments*)
 
