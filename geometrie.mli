@@ -27,6 +27,9 @@ val equation_obstacle : point list -> (float * float) list
 (* Fonction qui donne les segmenst composant le polygone *)
 val segmente_obstacle : point list -> (point * point) list
 
+(* Fonction qui vérifie si deux droites sont parallèles *)
+val parallele : point * point -> point * point -> bool
+
 (* Fonction qui donne le point d'intersection de deux droites *)
 val intersection_droites : point * point -> point * point -> point
 
