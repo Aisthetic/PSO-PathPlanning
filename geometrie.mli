@@ -1,12 +1,16 @@
-type point
+type point = {x : float; y : float}
 
+exception DroitesParalleles
+
+exception DroiteVerticale
+		
 (* Donne la différence acceptable entre deux flottants *)
 val epsilon : float
 
 (* Fonction qui donne la distance entre deux points *)
 val distance : point -> point -> float
 
-val fonction_objectif : point array -> float 
+(*val fonction_objectif : point array -> float *)
 
 val mult_point : point -> float -> point 
 
@@ -37,3 +41,4 @@ val croise_obstacle : point * point -> point list -> bool
 
 (* Fonction qui indique si un segment de la trajectoire traverse un des obstacles *)
 val trajectoire_ok : point list -> (point list) list -> bool
+(** Verifie la validite de la trajectoire *)
