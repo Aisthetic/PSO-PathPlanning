@@ -16,7 +16,6 @@ let distance = fun a b -> sqrt (((a.x -. b.x)**2.) +. ((a.y -. b.y)**2.));;
 			|[] -> acc
 			|(a,b)::q -> aux q (acc +. (distance a b))
 	in aux traj 0.;;
-
 ;; Juste pour pas avoir d'erreur, prendre fonction Caro*)
 
 (*let fonction_objectif = fun traj ->
@@ -47,7 +46,7 @@ let rec equation_obstacle = fun obst ->
 		|[p] -> []
 		|p1::p2::q -> (equation_droite p1 p2)::(equation_obstacle (p2::q));;
 
-(* Fonction qui donne les segments composant le polygone *)
+(* Fonction qui donne les segmenst composant le polygone *)
 let rec segmente_obstacle = fun obst ->
 	match obst with
 		|[] -> []
@@ -143,4 +142,4 @@ let trajectoire_ok = fun traj lst_obst ->
 			|[] -> traverse
 			|_ when traverse -> traverse
 			|t::q -> f_aux q (ok_pour_un traj_seg t false)
-	in not (f_aux lst_obst false);;
+in not (f_aux lst_obst false);;
