@@ -16,7 +16,6 @@ let distance = fun a b -> sqrt (((a.x -. b.x)**2.) +. ((a.y -. b.y)**2.));;
 			|[] -> acc
 			|(a,b)::q -> aux q (acc +. (distance a b))
 	in aux traj 0.;;
-
 ;; Juste pour pas avoir d'erreur, prendre fonction Caro*)
 
 (*let fonction_objectif = fun traj ->
@@ -27,6 +26,15 @@ let distance = fun a b -> sqrt (((a.x -. b.x)**2.) +. ((a.y -. b.y)**2.));;
 		d := !d +. (distance a b)
 	done; 
 	!d;;*)
+
+
+
+(* POUR DEBUGGAGE A SUPPRIMER ENSUITE *)
+let print_point = fun p ->
+	print_string "("; print_float p.x; print_string ";"; print_float p.y; print_string ") ";;
+
+
+
 
 let mult_point pt coeff = {x=coeff *. pt.x; y=coeff *. pt.y};;
 
@@ -47,7 +55,7 @@ let rec equation_obstacle = fun obst ->
 		|[p] -> []
 		|p1::p2::q -> (equation_droite p1 p2)::(equation_obstacle (p2::q));;
 
-(* Fonction qui donne les segments composant le polygone *)
+(* Fonction qui donne les segmenst composant le polygone *)
 let rec segmente_obstacle = fun obst ->
 	match obst with
 		|[] -> []
@@ -103,8 +111,9 @@ let pt_dans_seg = fun pt seg ->
 	in
 	let x_min, x_max = classe_coord a_seg.x b_seg.x in
 	let intra_h = ((pt.x <= x_max) && (pt.x >= x_min)) in (*Le point se situe horizontalement entre les deux points ?*)
-	(*let intra_v = ((pt.y <= y_max) && (pt.y >= y_min)) in Le point se situe verticalement entre les deux points ?*)
-	(sur_droite && intra_h);;
+	let y_min, y_max = classe_coord a_seg.y b_seg.y in
+	let intra_v = ((pt.y <= y_max) && (pt.y >= y_min)) in (*Le point se situe verticalement entre les deux points ?*)
+	(sur_droite && intra_h && intra_v);;
 
 (* Fonction qui indique si deux segments se croisent *)
 let croise_segment = fun s1 s2 ->
