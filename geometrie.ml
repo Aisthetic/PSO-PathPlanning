@@ -47,7 +47,7 @@ let rec equation_obstacle = fun obst ->
 		|[p] -> []
 		|p1::p2::q -> (equation_droite p1 p2)::(equation_obstacle (p2::q));;
 
-(* Fonction qui donne les segments composant le polygone *)
+(* Fonction qui donne les segmenst composant le polygone *)
 let rec segmente_obstacle = fun obst ->
 	match obst with
 		|[] -> []
