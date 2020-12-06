@@ -36,15 +36,9 @@ let somme_points pt1 pt2 = {x=pt1.x +. pt2.x; y=pt1.y +. pt2.y};;
 
 (* Fonction qui donne les paramètres d'une droite connaissant deux de ses points *)
 let equation_droite = fun a b -> 
-<<<<<<< HEAD
-	let dx = (b.x -. a.x) in
-	 let dy = (b.y -. a.y) in 
-	 (if dx = 0. then 0. else dy /. dx), (a.y -. ((dy /. dx) *. a.x));;
-=======
 	if ((abs_float (a.x -. b.x)) < epsilon) then raise DroiteVerticale
 	else
 		let m = (b.y -. a.y)/.(b.x -. a.x) in m, (a.y -. (m *. a.x));;
->>>>>>> 27d3c9fd5bcf1eb09b8df73efa88c490a9074f86
 
 (* Fonction qui donne les paramètres des droites formant le polygone *)
 let rec equation_obstacle = fun obst ->
@@ -78,13 +72,6 @@ let parallele = fun d1 d2 ->
 let intersection_droites = fun d1 d2 -> 
 	let a1,b1 = d1 in
 	let a2,b2 = d2 in
-<<<<<<< HEAD
-	let m1,q1 = equation_droite a1 b1 in
-	let m2,q2 = equation_droite a2 b2 in
-	let dm = m2 -. m1 in 
-	let dq = q2 -.q1 in
-	if dm = 0. then raise DroitesParalleles else {x= dq/.dm;y= m1*.(dq/.dm) +. q1}
-=======
 	if parallele d1 d2 then raise DroitesParalleles
 	else
 		if ((abs_float (a1.x -. b1.x)) < epsilon) then begin
@@ -101,16 +88,10 @@ let intersection_droites = fun d1 d2 ->
 						let m2,q2 = equation_droite a2 b2 in (*Equation de d2*)
 						let x_cross = (q2 -. q1)/.(m1 -. m2) in
 						{x = x_cross ; y = (m1 *. x_cross) +. q1};
->>>>>>> 27d3c9fd5bcf1eb09b8df73efa88c490a9074f86
 ;;
 
 (* Fonction qui indique si un point se situe dans un segment *)
 let pt_dans_seg = fun pt seg ->
-<<<<<<< HEAD
-	let pt1,pt2 = seg in
-	(pt1.x < pt.x && pt.x < pt2.x || pt1.x > pt.x && pt.x > pt2.x) && (pt1.y < pt.y && pt.y < pt2.y || pt1.y > pt.y && pt.y > pt2.y)
-;;
-=======
 	let classe_coord = fun xa xb -> if (xa < xb) then xa,xb else xb,xa in (*Fonction qui donne les coordonnées de deux points dans l'ordre croissant*)
 	let a_seg,b_seg = seg in
 	let sur_droite = 
@@ -124,7 +105,6 @@ let pt_dans_seg = fun pt seg ->
 	let intra_h = ((pt.x <= x_max) && (pt.x >= x_min)) in (*Le point se situe horizontalement entre les deux points ?*)
 	(*let intra_v = ((pt.y <= y_max) && (pt.y >= y_min)) in Le point se situe verticalement entre les deux points ?*)
 	(sur_droite && intra_h);;
->>>>>>> 27d3c9fd5bcf1eb09b8df73efa88c490a9074f86
 
 (* Fonction qui indique si deux segments se croisent *)
 let croise_segment = fun s1 s2 ->
