@@ -30,14 +30,6 @@ let obstacle2 = [|[|{Geometrie.x=30.; y= 15.};
 					{x=10.; y= 57.}; 
 					{x=17.; y= 15.};|]|];;
 
-let obstacle_vide = [[{Geometrie.x=60.; y= 5.};
-						{x=60.; y= 10.};
-						{x=70.; y= 10.};
-						{x=60.; y= 5. }]]
-let obstacle_vide2 = [|[|{Geometrie.x=60.; y= 5.};
-						{x=60.; y= 10.};
-						{x=70.; y= 10.};
-						{x=60.; y= 5. }|]|]
 (* Proeblèmes à resoudre : *)
 (* coordonnées négatives *)
 (* peu d'itérations *)
@@ -85,8 +77,9 @@ let maj_vitesse part g = 					(*Calcul de la nouvelle vitesse à partir de la fo
 	let p = part.Initialisation_avion.position in
 	let v = part.vitesse in
 	let m = part.meilleur in
+	let len = Array.length v in
 	let new_v = ref 0. in
-	for i=0 to (d-1) do 
+	for i=2 to (len - 3) do 
 		new_v := w *. v.(i) +. c1 *. (m.(i) -. p.(i)) +. c2 *. (g.(i) -. p.(i));
 		if  !new_v > vmax then part.vitesse.(i) <- vmax
 		else part.vitesse.(i) <- !new_v;
@@ -116,24 +109,32 @@ Printf.printf "\nContraintes respectees :%b\n" (contraintes part);;
 
 print_string "\n";;
  (* 
-Gui.create obstacle_vide2 (float_array_to_point_array (part.Initialisation_avion.position));; *)  
 
 let maj_position part = 					(*On a maj la vitesse, il faut déplacer la particule*)
 	(* print_string "Dans maj_pos\n" ;*)
-	for i=0 to (d-1) do 
+	let len = Array.length part.Initialisation_avion.position in
+	for i=2 to (len - 3) do 
 		part.Initialisation_avion.position.(i) <- part.position.(i) +. part.vitesse.(i);(*maj position*)
 	done;; 
 	(* print_string "appel maj meilleur local\n" ;*)
+
+
+
 
 let maj_meilleur_local part = 				(*Gestion des contraintes*)
 	(* print_string "Dans maj meilleur local\n" ;*)
 	if (contraintes part && ((fonction_objectif part.position) < (fonction_objectif part.meilleur))) then
 	begin (*On remplace le meilleur local*)
-		for i=0 to (d-1) do
+		let len = Array.length part.Initialisation_avion.position in
+		for i=2 to (len - 3) do 
 			part.meilleur.(i) <- part.position.(i);
 			print_float part.position.(i); 
 		done;
 	end;;
+
+
+
+
 
 let moyenne_float_array tab =				(*Fonction qui calcule la moyenne d'un tableau de float*) 
 	(* print_string "Dans moyenne float arr\n" ;
