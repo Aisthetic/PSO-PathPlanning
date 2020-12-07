@@ -153,3 +153,29 @@ let trajectoire_ok = fun traj lst_obst ->
 			|_ when traverse -> traverse
 			|t::q -> f_aux q (ok_pour_un traj_seg t false)
 	in not (f_aux lst_obst false);;
+
+
+
+
+
+(*TEST TRAVAUX *)
+
+let obstacle = [[	{x=30.; y= 15.}; 
+					{x=70.; y=50.}; 
+					{x=34.; y= 52.}; 
+					{x=30.; y= 15.}]; 
+				[	{x=17.; y= 15.};
+					{x=27.; y= 15.};
+					{x=25.; y= 50.};
+					{x=10.; y= 57.}; 
+					{x=17.; y= 15.};]];;
+let traj = [{x=0.; y=0.};
+			{x= -134.; y= -0.3};
+			{x= -66.; y= -6.5};
+			{x= 12.8; y= 42.7};
+			{x= 54.; y= 34.3};
+			{x= 54.6; y= 20.};
+			{x= 80.; y= 60.}];;
+
+
+if (trajectoire_ok traj obstacle) then print_string "je suis un algo debile" else print_string "je fonctionne";;
