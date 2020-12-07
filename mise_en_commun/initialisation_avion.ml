@@ -1,5 +1,5 @@
 (* This module contains the functions needed to generate a swarm and to display it *)
-open Geometrie
+
 
 type point = Geometrie.point;;
 type particule = 
@@ -21,7 +21,7 @@ let array_to_point tab =
 	let lst = ref [] in
 	let i = ref (len-2) in 
 	while !i >= 0 do 
-		lst := {x = tab.(!i); y = tab.(!i+1)} :: !lst;
+		lst := {Geometrie.x = tab.(!i); y = tab.(!i+1)} :: !lst;
 		i := !i-2;
 	done;
 	!lst;;
@@ -36,7 +36,7 @@ let gen_point = fun xmax ->
 
 let generation_traj = fun nb xmax p_obj-> (*Génère une trajectoire*)
 	let rec rec_gen = fun trajectoire increment ->
-		if increment = nb then Array.append trajectoire ([|p_obj.x; p_obj.y|])
+		if increment = nb then Array.append trajectoire ([|p_obj.Geometrie.x; p_obj.y|])
 		else
 			rec_gen (Array.append trajectoire (gen_point xmax)) (increment+1)
 	in rec_gen ([| 0.; 0.|]) 0;;	

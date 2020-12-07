@@ -4,8 +4,7 @@
 (* source : https://caml.inria.fr/pub/docs/oreilly-book/pdf/chap5.pdf *)
 
 
-open Graphics;;
-open Geometrie;;
+
 (* En attendant que Geometry est debug par caro *)
 type point = Geometrie.point
 
@@ -23,7 +22,7 @@ let draw_path r =
   let (a,b) = Graphics.current_point() in
   (* On trace une ligne entre les points du tableau*)
   let pt0 = r.(0) in (* On se positionne au premier point du tableau *)
-  let x0 = int_of_float (pt0.x *. scale) in 
+  let x0 = int_of_float (pt0.Geometrie.x *. scale) in 
   let y0 = int_of_float (pt0.y *. scale) in
   Graphics.moveto x0 y0; 
   for i = 1 to (Array.length r)-1 do
@@ -38,7 +37,7 @@ let draw_poly r =
   Graphics.set_color obstacles_color;
   let (a,b) = Graphics.current_point() in
   let pt0 = r.(0) in
-  let x0 = int_of_float (pt0.x *. scale) in
+  let x0 = int_of_float (pt0.Geometrie.x *. scale) in
   let y0 = int_of_float (pt0.y *. scale) in
   Graphics.moveto x0 y0;
   for i = 1 to (Array.length r)-1 do
@@ -59,7 +58,7 @@ let draw_obstacles r =
 (* Creates a loop for the interface to keep running*)
 (* And catches keyboard evens *)
 let rec interactive () =
-  let event = wait_next_event [Key_pressed] in
+  let event = Graphics.wait_next_event [Key_pressed] in
   if event.key == 'q' then exit 0 
   else print_char event.key; print_newline (); interactive ();;
 
