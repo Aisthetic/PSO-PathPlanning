@@ -1,8 +1,8 @@
-let n = 50;; 					(*Nombre de particules*) 
-let nb = 5;;					(*Nombre de points*)
+let n = 1;; 					(*Nombre de particules*) 
+let nb = 1;;					(*Nombre de points*)
 let d = 2 * nb;; 				(*Taille des tableaux dans particules*)
-let iterMax = 50;;	 			(*Nombre d'itération max*)
-let epsilon = 0.001;; 			(*Précision de la variation de vitesse*)
+let iterMax = 2;;	 			(*Nombre d'itération max*)
+let epsilon = 10.**(-5.);;		(*Précision de la variation de vitesse*)
 let w = 0.72;; 					(*Inertie*)
 let c1 = 1.;; 					(*Indice de confiance cognitive*)
 let c2 = 1.;; 					(*Indice de confiance sociale*)
@@ -10,7 +10,7 @@ let xmax = 100.;; 				(*Norme 1 max d'un point tournant autour du point de dépa
 let xmin = 0.;; 				(*Norme 1 min d'un point tournant autour du point de départ*)
 let vmax = 10.;;					(*Vitesse max d'une particule*)
 let infini = 1000000.			(*Infini*)
-let p_obj = {Geometrie.x = 80.; y = 60.} (*Destination*) 
+let p_obj = {Geometrie.x = 100.; y = 100.} (*Destination*) 
 let obstacle = [[	{Geometrie.x=30.; y= 15.}; 
 					{x=70.; y=50.}; 
 					{x=34.; y= 52.}; 
@@ -63,14 +63,17 @@ let fonction_objectif float_array = 			(*Fonction à minimiser*)
 	let len = Array.length float_array in
 	let point_array = Array.make (len/2 -1) ({Geometrie.x=0.;y=0.}, {Geometrie.x=0.;y=0.}) in
 	let i = ref 0 in
-	while !i < (len/2 - 2) do 
-		point_array.(!i) <- ({Geometrie.x=float_array.(2*(!i)); 
-									y=float_array.(2*(!i)+1)},
-								{	x=float_array.(2*(!i)+2); 
-									y=float_array.(2*(!i)+3)});
+	while !i <= (len/2 - 2) do 
+		point_array.(!i) <- (	{Geometrie.x=float_array.((2*(!i))); 
+								y=float_array.(2*(!i)+1)},
+							{  	x=float_array.(2*(!i)+2); 
+								y=float_array.(2*(!i)+3)});
 		i := !i + 1;
 	done;
 	Geometrie.fonction_objectif point_array;; 		
+
+
+
 
 let maj_vitesse part g = 					(*Calcul de la nouvelle vitesse à partir de la formule*)
 	(* print_string "Dans maj_vitesse\n" ; *)
@@ -87,28 +90,27 @@ let maj_vitesse part g = 					(*Calcul de la nouvelle vitesse à partir de la fo
 
 
 
-let part = {Initialisation_avion.position=[|0. ;0. ; 80.; 60.|] ;
-			vitesse = [|0. ;0. ; 0.; 0.|];
-			meilleur = [|0. ;0. ; 80.; 60.|]};;
 
 
-(*probleème de parcours de toute la liste dans tous les cas : chercher l'aquivalent d'un break python dans une boucle for*)
+
 let contraintes part =						(*évalue liste de conditions de la forme f(variables)<=0*)
 	let test = ref true in
-	for i=0 to (Array.length (part.Initialisation_avion.position) -1) do
-		test :=(!test && (part.position.(i) >= 0.))
+	let i = ref 0 in
+	let len = Array.length (part.Initialisation_avion.position) -1 in
+	while !test && !i<len do
+		test :=(!test && (part.position.(!i) >= 0.) && (part.position.(!i) <= xmax));
+		i := !i + 1;
 	done;(* 
 	if !test then print_string "\ncoordonnees positives\n"; *)
-	Printf.printf "\n trajectoire ok : %b\n" (Geometrie.trajectoire_ok (Initialisation_avion.array_to_point part.position) obstacle);
+	(* Printf.printf "\n trajectoire ok : %b\n" (Geometrie.trajectoire_ok (Initialisation_avion.array_to_point part.position) obstacle); *)
 	(!test && (Geometrie.trajectoire_ok (Initialisation_avion.array_to_point part.position) obstacle))
 	;;
 
-affiche_tableau part.position;;
-print_string "\n";;
-Printf.printf "\nContraintes respectees :%b\n" (contraintes part);;
 
-print_string "\n";;
- (* 
+
+
+
+
 
 let maj_position part = 					(*On a maj la vitesse, il faut déplacer la particule*)
 	(* print_string "Dans maj_pos\n" ;*)
@@ -128,7 +130,7 @@ let maj_meilleur_local part = 				(*Gestion des contraintes*)
 		let len = Array.length part.Initialisation_avion.position in
 		for i=2 to (len - 3) do 
 			part.meilleur.(i) <- part.position.(i);
-			print_float part.position.(i); 
+			(* print_float part.position.(i);  *)
 		done;
 	end;;
 
@@ -155,11 +157,19 @@ let maj_vitesse_moy particules =			(*Fonction qui calcule la norme moyenne de to
 
 let maj_meilleur_global particules g = 		(*Compare les meilleurs locaux au global*)
 	(* print_string "Dans maj_meilleur global\n" ;*)
+	print_string "\nmeilleur global avant calcul:\n";
+	affiche_tableau g;
+	print_string "\nValeur de la fonction obj: ";
+	print_float (fonction_objectif g);
 	let nouveau_g = ref(g) in
 	for i=0 to (n-1) do
 		if (fonction_objectif (particules.(i).Initialisation_avion.meilleur) < fonction_objectif g) then
 			nouveau_g := particules.(i).meilleur;
 	done;
+	print_string "\n\nmeilleur local après calcul:\n";
+	affiche_tableau !nouveau_g;
+	print_string "\nValeur de la fonction obj après calcul: ";
+	print_float (fonction_objectif !nouveau_g);
 	!nouveau_g;; (*point Array*)
 
 
@@ -167,19 +177,25 @@ let maj_meilleur_global particules g = 		(*Compare les meilleurs locaux au globa
 let algo = fun _ -> 						(*Algo à lancer dans le main, print les meilleurs globaux et la valeur de la fonction objectif à chaque itération*)
 	let particules = genere_particules n in 				
 	let rec particleswarm = fun particules cmpt var_vitesse vitesse_moy g ->
-		if (cmpt > iterMax (* || (var_vitesse < epsilon) *))  then begin print_string"\n\nglobal de fin";affiche_tableau g; g end
-		else 
+		if (cmpt >= iterMax (* || (var_vitesse < epsilon) *))  then begin print_string"\n\nglobal de fin\n";affiche_tableau g; g end
+		else		
 			begin
-				for i=0 to (n-1) do (* 
-					print_string "\nNombre d'itérations: \n";
-					print_int cmpt; *)
+				print_string "\nITERATION "; 
+				print_int (cmpt+1);	
+				for i=0 to (n-1) do 
+					(* print_string "\nParticule: ";
+					print_int i; *)
 					maj_vitesse particules.(i) g; 
 					maj_position particules.(i); 			 
 					maj_meilleur_local particules.(i);
 					(* print_string "\nposition: \n";
 					affiche_tableau particules.(i).position;
+					print_string "Longueur position actuelle = ";
+					print_float (fonction_objectif particules.(i).position);
 					print_string "\nmeilleur: \n";
 					affiche_tableau particules.(i).meilleur;
+					print_string "Longueur meilleur actuel = ";
+					print_float (fonction_objectif particules.(i).meilleur);
 					print_string "\nvitesse: \n";
 					affiche_tableau particules.(i).vitesse;
 					print_string "\n";
@@ -188,22 +204,24 @@ let algo = fun _ -> 						(*Algo à lancer dans le main, print les meilleurs glo
 				let nvl_vitesse_moy = maj_vitesse_moy particules in	(*Pour tester si on stagne*)
 				let nvl_var_vitesse = abs_float (vitesse_moy -. nvl_vitesse_moy) in 
 				let nvx_meilleur_global = maj_meilleur_global particules g in
-				(* affiche_tableau nvx_meilleur_global;
+				print_string "\nmeilleur global\n";
+				affiche_tableau nvx_meilleur_global;
 				print_string "Longueur trajectoire = ";
 				print_float (fonction_objectif nvx_meilleur_global);
-				print_string "\nNombre d'itérations: ";
-				print_int cmpt;
+				(* print_string "\nNombre d'itérations: ";
+				print_int cmpt; *)
 				print_string "\n";
-				print_string "\n"; *)
+				print_string "\n";
 				particleswarm particules (cmpt+1) nvl_var_vitesse nvl_vitesse_moy nvx_meilleur_global;
 			end
 	in 
+	print_string "initialisation\n";
 	let var_vitesse = infini in
 	let vitesse_moy = maj_vitesse_moy particules in
 	let g = maj_meilleur_global particules (particules.(0).meilleur) in
-	affiche_tableau g;
+	(* affiche_tableau g;
 	print_string "FONCTION OBJECTIF = ";
-	print_float (fonction_objectif g);
+	print_float (fonction_objectif g); *)
 	print_string "\n";
 	print_string "\n";
 	particleswarm particules 0 var_vitesse vitesse_moy g;;	(*Checker valeurs initiales*)
@@ -211,4 +229,31 @@ let algo = fun _ -> 						(*Algo à lancer dans le main, print les meilleurs glo
 
 
 
-Gui.create obstacle2 (float_array_to_point_array (algo()));;
+let part = {Initialisation_avion.position=[|0. ;0. ;50.; 50.; 100.; 100.|] ;
+			vitesse = [|0. ;0. ; 0.; 0.; 0.; 0.|];
+			meilleur = [|0. ;0. ;0.; 100.; 100.; 100.|]};;
+
+
+(* Initialisation_avion.print_particule part;;
+maj_meilleur_local part;;
+print_string "\n";;
+Initialisation_avion.print_particule part;; *)
+
+
+(* print_string "\n";
+print_float (fonction_objectif [|0.;0.;0.;100.;100.;100.|]); *)
+
+
+
+
+(* affiche_tableau part.position;;
+print_string "\n";;
+Printf.printf "\nContraintes respectees :%b\n" (contraintes part);;
+
+print_string "\n";; *)
+
+
+
+
+
+Gui.create obstacle2 (float_array_to_point_array (algo()));; 

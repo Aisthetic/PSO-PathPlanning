@@ -11,8 +11,8 @@ type point = Geometrie.point
 (* local variables *)
 let path_color = Graphics.rgb 255 0 0;; (* red *)
 let obstacles_color = Graphics.rgb 0 255 0;;
-let initial_width = 600;; (* wight de la fen *)
-let initial_heigth = 800;; (* height de la fen *)
+let initial_width = 1000;; (* wight de la fen *)
+let initial_heigth = 1000;; (* height de la fen *)
 let scale = 10.;; (* echelle utilisée *)
 (*------- User Interface Utility Functions -------*)
  
