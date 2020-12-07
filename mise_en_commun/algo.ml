@@ -1,4 +1,4 @@
-let n = 5;; 					(*Nombre de particules*) 
+let n = 50;; 					(*Nombre de particules*) 
 let nb = 3;;					(*Nombre de points*)
 let d = 2 * nb;; 				(*Taille des tableaux dans particules*)
 let iterMax = 100;;	 			(*Nombre d'itération max*)
@@ -8,19 +8,27 @@ let c1 = 1.;; 					(*Indice de confiance cognitive*)
 let c2 = 1.;; 					(*Indice de confiance sociale*)
 let xmax = 100.;; 				(*Norme 1 max d'un point tournant autour du point de départ*)
 let xmin = 0.;; 				(*Norme 1 min d'un point tournant autour du point de départ*)
-let vmax = 3.;;					(*Vitesse max d'une particule*)
+let vmax = 10.;;					(*Vitesse max d'une particule*)
 let infini = 1000000.			(*Infini*)
 let p_obj = {Geometrie.x = 80.; y = 60.} (*Destination*) 
 let obstacle = [[	{Geometrie.x=30.; y= 15.}; 
 					{x=70.; y=50.}; 
-					{x=34.; y= 52.}; 
+				{x=34.; y= 52.}; 
 					{x=30.; y= 15.}]; 
 				[	{Geometrie.x=10.; y= 15.};
 					{x=25.; y= 15.};
 					{x=25.; y= 50.};
 					{x=10.; y= 50.}; 
 					{x=10.; y= 15.};]];;
-
+let obstacle2 = [|[|{Geometrie.x=30.; y= 15.}; 
+					{x=70.; y=50.}; 
+				{x=34.; y= 52.}; 
+					{x=30.; y= 15.}|]; 
+				[|	{Geometrie.x=10.; y= 15.};
+					{x=25.; y= 15.};
+					{x=25.; y= 50.};
+					{x=10.; y= 50.}; 
+					{x=10.; y= 15.};|]|];;
 
 
 (* Proeblèmes à resoudre : *)
@@ -32,9 +40,24 @@ let obstacle = [[	{Geometrie.x=30.; y= 15.};
 type particule = Initialisation_avion.particule
 (* trouver un moyen d'importer ca proprement plutot que de faire part.Ini... dans la suite*)
 
+let affiche_tableau tab =					(*Affiche les éléments d'un tableau de flottants*)
+	for i=0 to (Array.length tab -1) do
+		print_float tab.(i);
+		print_string "\n";
+	done;;
 
 let genere_particules n = 					(*Fonction qui génère un tableau de n particules, faite par Marc*)	
 	Initialisation_avion.gen_swarm n nb p_obj xmax vmax obstacle;;
+
+let float_array_to_point_array float_array =
+	let len = Array.length float_array in
+	let point_array = Array.make (len/2 -1) {Geometrie.x=0.;y=0.} in
+	let i = ref 0 in
+	while !i < (len/2 -1) do 
+		point_array.(!i) <- {x=float_array.(2*(!i)); y=float_array.(2*(!i)+1)};
+		i := !i + 1;
+	done;
+	point_array;;
 
 let fonction_objectif float_array = 			(*Fonction à minimiser*)
 	(* print_string "Dans fct_objectif\n" ;*)
@@ -60,14 +83,29 @@ let maj_vitesse part g = 					(*Calcul de la nouvelle vitesse à partir de la fo
 	done;;
 
 
+(* 
+let part = Initialisation_avion.gen_particule nb p_obj xmax vmax obstacle;;
+ *)
+
 (*probleème de parcours de toute la liste dans tous les cas : chercher l'aquivalent d'un break python dans une boucle for*)
 let contraintes part =						(*évalue liste de conditions de la forme f(variables)<=0*)
 	let test = ref true in
-	for i=0 to (Array.length (part.Initialisation_avion.position)) do
-		test :=(!test && (part.position.(i) > 0.))
+	for i=0 to (Array.length (part.Initialisation_avion.position) -1) do
+		test :=(!test && (part.position.(i) >= 0.))
 	done;
+	if !test then print_string "\ncoordonnees positives :";
 	(!test && (Geometrie.trajectoire_ok (Initialisation_avion.array_to_point part.position) obstacle))
 	;;
+
+(* 
+affiche_tableau part.position;;
+print_string "\n";;
+print_string "\nContraintes respectees :";;
+Printf.printf "%b\n" (contraintes part);;
+
+print_string "\n";;
+
+Gui.create obstacle2 (float_array_to_point_array (part.position));; *)
 
 let maj_position part = 					(*On a maj la vitesse, il faut déplacer la particule*)
 	(* print_string "Dans maj_pos\n" ;*)
@@ -82,6 +120,7 @@ let maj_meilleur_local part = 				(*Gestion des contraintes*)
 	begin (*On remplace le meilleur local*)
 		for i=0 to (d-1) do
 			part.meilleur.(i) <- part.position.(i);
+			print_float part.position.(i); 
 		done;
 	end;;
 
@@ -111,11 +150,7 @@ let maj_meilleur_global particules g = 		(*Compare les meilleurs locaux au globa
 	done;
 	!nouveau_g;; (*point Array*)
 
-let affiche_tableau tab =					(*Affiche les éléments d'un tableau de flottants*)
-	for i=0 to (Array.length tab -1) do
-		print_float tab.(i);
-		print_string "\n";
-	done;;
+
 
 let algo = fun _ -> 						(*Algo à lancer dans le main, print les meilleurs globaux et la valeur de la fonction objectif à chaque itération*)
 	let particules = genere_particules n in 				
@@ -131,13 +166,13 @@ let algo = fun _ -> 						(*Algo à lancer dans le main, print les meilleurs glo
 				let nvl_vitesse_moy = maj_vitesse_moy particules in	(*Pour tester si on stagne*)
 				let nvl_var_vitesse = abs_float (vitesse_moy -. nvl_vitesse_moy) in 
 				let nvx_meilleur_global = maj_meilleur_global particules g in
-				affiche_tableau nvx_meilleur_global;
+				(* affiche_tableau nvx_meilleur_global;
 				print_string "Longueur trajectoire = ";
 				print_float (fonction_objectif nvx_meilleur_global);
 				print_string "\nNombre d'itérations: ";
 				print_int cmpt;
 				print_string "\n";
-				print_string "\n";
+				print_string "\n"; *)
 				particleswarm particules (cmpt+1) nvl_var_vitesse nvl_vitesse_moy nvx_meilleur_global;
 			end
 	in 
@@ -152,4 +187,5 @@ let algo = fun _ -> 						(*Algo à lancer dans le main, print les meilleurs glo
 
 
 
-algo();;
+
+Gui.create obstacle2 (float_array_to_point_array (algo()));;

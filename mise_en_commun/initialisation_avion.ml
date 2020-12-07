@@ -29,7 +29,7 @@ let array_to_point tab =
 
 (* génère un point aléatoire de dimaesion 2 avec p les coordonnées maximales *)
 let gen_point = fun xmax ->
-	[|Random.float xmax; Random.float xmax|]
+	[|Random.float xmax; Random.float xmax|]  (*REGARDER POUR TRONQUER UN FLOTTANT*)
 
 (* génère un array de nb points de dimension 2 avec p_obj les limites *)
 (*Trajectoire commence forcément par 0,0 et termine par px,py*)
@@ -52,7 +52,7 @@ let generation_speed = fun nb vmax ->
 (* genère une particule*)
 let gen_particule = fun nb p_obj xmax vmax obstacle->
 	let pos_init = ref (generation_traj nb xmax p_obj) in
-	while (Geometrie.trajectoire_ok (array_to_point !pos_init) obstacle) do 
+	while not (Geometrie.trajectoire_ok (array_to_point !pos_init) obstacle) do 
 		pos_init := (generation_traj nb xmax p_obj)
 	done;
 	{position = !pos_init; vitesse = generation_speed nb vmax; meilleur = !pos_init};; 
@@ -92,7 +92,7 @@ let print_swarm = fun swarm ->
 
 
 
-(* ZONE DE TESTS EN TRAVAUX*)
+(* (* ZONE DE TESTS EN TRAVAUX*)
 let n = 5;; 					(*Nombre de particules*) 
 let nb = 3;;					(*Nombre de points*)
 let d = 2 * nb;; 				(*Taille des tableaux dans particules*)
@@ -119,4 +119,4 @@ let obstacle = [[	{x=30.; y= 15.};
  *)
 
 
-print_swarm (gen_swarm n nb p_obj xmax vmax obstacle);;
+print_swarm (gen_swarm n nb p_obj xmax vmax obstacle);; *)
