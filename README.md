@@ -40,14 +40,14 @@ PSO-PathPlanning
 |
 |
 |___Modules_communs 
-│   └─── geometrie.ml
-│   |   │   génération basique 
-│   │
-│   └─── gui.ml
-│   |   │   l'algo du PSO (appliqué au problème du wagon pour exemple)
-│   |
-│   └─── utility.ml
-│   |   │   les fonctions de debugage (notamment print)
+    └─── geometrie.ml
+    |   │   génération basique 
+    │
+    └─── gui.ml
+    |   │   l'algo du PSO (appliqué au problème du wagon pour exemple)
+    |
+    └─── utility.ml
+        │   les fonctions de debugage (notamment print)
 ```
 
 ## Contributing
