@@ -33,9 +33,6 @@ let distance = fun a b -> sqrt (((a.x -. b.x)**2.) +. ((a.y -. b.y)**2.));;
 let print_point = fun p ->
 	print_string "("; print_float p.x; print_string ";"; print_float p.y; print_string ") ";;
 
-
-
-
 let mult_point pt coeff = {x=coeff *. pt.x; y=coeff *. pt.y};;
 
 let soustrait_points pt1 pt2 = {x=pt1.x -. pt2.x; y=pt1.y -. pt2.y};;

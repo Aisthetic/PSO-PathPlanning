@@ -55,8 +55,7 @@ let gen_particule = fun nb p_obj xmax vmax obstacle->
 	while not (Geometrie.trajectoire_ok (array_to_point !pos_init) obstacle) do 
 		pos_init := (generation_traj nb xmax p_obj)
 	done;
-	{position = !pos_init; vitesse = generation_speed nb vmax; meilleur = !pos_init};; 
-
+	{position = !pos_init; vitesse = generation_speed nb vmax; meilleur = !pos_init};;
 
 (* génère un nombre n de particules avec nb points de dimension 2 et p_obj l'objectif, obstacle une point list list*)
 let gen_swarm = fun n nb p_obj xmax vmax obstacle->

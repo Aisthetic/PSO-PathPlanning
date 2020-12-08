@@ -1,0 +1,4 @@
+Utility pour regouper toutes les fonctions print_xxx
+TODO : La génération d'obstacles statiques n'est pas encore faite
+ajout d'un fichier pour les tests unitaires
+calcul automatique des coordonnées maximales
