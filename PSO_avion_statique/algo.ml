@@ -253,4 +253,7 @@ Printf.printf "\nContraintes respectees :%b\n" (contraintes part);;
 print_string "\n";; *)
 
 
+
+
+
 Gui.create obstacle2 (float_array_to_point_array (algo()));; 

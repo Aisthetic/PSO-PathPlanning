@@ -1,0 +1,17 @@
+MODE D'EMPLOI
+
+PSO_general : 
+	initialisation -> génération basique 
+	particleswarm -> l'algo du PSO (appliqué au problème du wagon pour exemple)
+
+PSO_avion_statique : (obstacles statiques dans le temps)
+	initialisation_avion -> génération de particules appliquées a notre problème
+	algo -> résolution à l'aide du PSO (encore en debugage)
+
+PSO_avion_deterministe : (position des obstacles connue dans le temps)
+	encore vide -> à remplir
+
+Modules_communs : (les modules communs a plus de 2 dossiers)
+	geometrie -> contient les fonctions concernant la trajectoire et les obstacles
+	gui -> notre interface graphique
+	utility -> les fonctions de debugage (notamment print)
