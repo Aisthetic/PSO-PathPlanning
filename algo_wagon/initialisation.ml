@@ -2,7 +2,7 @@
 
 type particule = {position : float array; vitesse : float array; best_pos : float array};;
 
-type obstacle = {aretes : float array; vitesse : float};; (* chaque point est un array *)
+type obstacle_wrapper = {obstacle : float array; vitesse : float};; (*  *)
 
  (* génération de la nouvelle seed aléatoire *)
  Random.self_init ();;
@@ -34,16 +34,16 @@ let  gen_swarm = fun d nb k p ->
 	in rec_swarm [||] 0;;
 
 (* génère un obstacle aléatoire avec N points de dimension k avec p les coordonnées maximales *)
-let gen_obstacle = fun nombre_aretes dimension coord_max vitesse_max ->
-	 {aretes = (generation nombre_aretes dimension coord_max) ; vitesse = Random.float vitesse_max};;
+let gen_obstacle = fun nombre_obstacle dimension coord_max vitesse_max ->
+	 {obstacle = (generation nombre_obstacle dimension coord_max) ; vitesse = Random.float vitesse_max};;
 
 (* génère nombre_obs fois d'obstacles aléatoires avec N points de dimension k avec p les coordonnées maximales *)
-let gen_obstacles = fun nombre_obs dimension coord_max vitesse_max nombre_aretes_max ->
+let gen_obstacles = fun nombre_obs dimension coord_max vitesse_max nombre_obstacle_max ->
 	let rec rec_gen_obs = fun obstacles nb_obs ->
 		if nb_obs = nombre_obs then obstacles
 		else
-			let nb_aretes = Random.int nombre_aretes_max in
-			rec_gen_obs (Array.append obstacles [| gen_obstacle nb_aretes dimension coord_max vitesse_max |]) (nb_obs +1)
+			let nb_obstacle = Random.int nombre_obstacle_max in
+			rec_gen_obs (Array.append obstacles [| gen_obstacle nb_obstacle dimension coord_max vitesse_max |]) (nb_obs +1)
 	in rec_gen_obs [||] 0;;	
 	
 (* AFFICHAGE *)
