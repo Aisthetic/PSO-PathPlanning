@@ -1,5 +1,5 @@
 (* This module contains the functions needed to generate a swarm and to display it *)
-
+open Geometrie
 
 type point = Geometrie.point;;
 type particule = 
@@ -21,7 +21,7 @@ let array_to_point tab =
 	let lst = ref [] in
 	let i = ref (len-2) in 
 	while !i >= 0 do 
-		lst := {Geometrie.x = tab.(!i); y = tab.(!i+1)} :: !lst;
+		lst := {x = tab.(!i); y = tab.(!i+1)} :: !lst;
 		i := !i-2;
 	done;
 	!lst;;
@@ -36,7 +36,7 @@ let gen_point = fun xmax ->
 
 let generation_traj = fun nb xmax p_obj-> (*Génère une trajectoire*)
 	let rec rec_gen = fun trajectoire increment ->
-		if increment = nb then Array.append trajectoire ([|p_obj.Geometrie.x; p_obj.y|])
+		if increment = nb then Array.append trajectoire ([|p_obj.x; p_obj.y|])
 		else
 			rec_gen (Array.append trajectoire (gen_point xmax)) (increment+1)
 	in rec_gen ([| 0.; 0.|]) 0;;	
@@ -49,13 +49,22 @@ let generation_speed = fun nb vmax ->
 			rec_gen (Array.append speed (gen_point vmax)) (increment+1)
 	in rec_gen ([|0.;0.|]) 0;;
 
+let copie_tab = fun tab ->
+	let n = Array.length tab in
+	let tab2 = Array.make n 0. in
+	for i = 0 to (n-1) do
+		tab2.(i) <- tab.(i);
+	done;
+	tab2;;
+
 (* genère une particule*)
 let gen_particule = fun nb p_obj xmax vmax obstacle->
 	let pos_init = ref (generation_traj nb xmax p_obj) in
 	while not (Geometrie.trajectoire_ok (array_to_point !pos_init) obstacle) do 
 		pos_init := (generation_traj nb xmax p_obj)
 	done;
-	{position = !pos_init; vitesse = generation_speed nb vmax; meilleur = !pos_init};;
+	{position = (copie_tab !pos_init); vitesse = generation_speed nb vmax; meilleur = (copie_tab !pos_init)};; 
+
 
 (* génère un nombre n de particules avec nb points de dimension 2 et p_obj l'objectif, obstacle une point list list*)
 let gen_swarm = fun n nb p_obj xmax vmax obstacle->

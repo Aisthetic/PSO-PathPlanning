@@ -8,25 +8,8 @@ exception DroiteVerticale;;
 let epsilon = 10.**(-5.);;
 
 (* Fonction qui donne la distance entre deux points *)
-let distance = fun a b -> sqrt (((a.x -. b.x)**2.) +. ((a.y -. b.y)**2.));;
-
-(*let fonction_objectif = fun traj ->
-	let rec aux = fun lst acc ->
-		match lst with
-			|[] -> acc
-			|(a,b)::q -> aux q (acc +. (distance a b))
-	in aux traj 0.;;
-;; Juste pour pas avoir d'erreur, prendre fonction Caro*)
-
-let fonction_objectif = fun traj ->
-	let n = Array.length traj in
-	let d = ref 0. in 
-	for i = 0 to (n-1) do 
-		let a,b = traj.(i) in
-		d := !d +. (distance a b)
-	done; 
-	!d;;
-
+let distance = fun a b -> sqrt (((a.x -. b.x)*.(a.x -. b.x)) +. ((a.y -. b.y)*.(a.y -. b.y)));;
+ 
 
 
 (* POUR DEBUGGAGE A SUPPRIMER ENSUITE *)
@@ -158,7 +141,7 @@ let trajectoire_ok = fun traj lst_obst ->
 
 
 
-(*TEST TRAVAUX *)
+(* (*TEST TRAVAUX *)
 
 let obstacle = [[	{x=30.; y= 15.}; 
 					{x=70.; y=50.}; 
@@ -178,4 +161,4 @@ let traj = [{x=0.; y=0.};
 			{x= 80.; y= 60.}];;
 
 
-if (trajectoire_ok traj obstacle) then print_string "je suis un algo debile" else print_string "je fonctionne";;
+if (trajectoire_ok traj obstacle) then print_string "je suis un algo debile" else print_string "je fonctionne";; *)
