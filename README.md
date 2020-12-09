@@ -13,8 +13,9 @@ opam install ocamlfind
 ```
 
 ## Usage
+Make sure your current working directory is the root of the project then use this command to run a version of the project : 
 ```bash
-ocamlbuild -use-ocamlfind -pkg graphics main.d.byte 
+ocamlbuild -use-ocamlfind -pkg graphics PSO_{version_name}/{file_name}.d.byte 
 ```
 ## Arborescence
 ```
