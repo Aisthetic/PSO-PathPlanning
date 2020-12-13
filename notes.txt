@@ -1,8 +1,7 @@
 Utility_print pour regouper toutes les fonctions print_xxx
-TODO : La génération d'obstacles statiques n'est pas encore faite
 ajout d'un fichier pour les tests unitaires
 calcul automatique des coordonnées maximales
-Depace de copie_tab de initialisation à Utility_print
-ajout de deplacer obstacle 
+Depacement de copie_tab de initialisation à Utility_print
+ajout de deplacement d'obstacle 
 Debug des utility
-deplacement de tout les type vers geometry
+deplacement de tout les types vers geometrie
