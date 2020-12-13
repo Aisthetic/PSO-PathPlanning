@@ -15,7 +15,7 @@ let obstacles_color = Graphics.rgb 0 255 0;;
 let initial_width = 600;; (* wight de la fen *)
 let initial_heigth = 800;; (* height de la fen *)
 let scale = ref 10.;; (* echelle utilisée *)
-(*------- User Interface Utility Functions -------*)
+(*------- User Interface Utility_print Functions -------*)
  
 let draw_path r = 
   (* On change de couleur pour tracer le chemin*)
@@ -85,20 +85,25 @@ let max_coordinates obstacles path =
 
 
 let create obstacles path = 
-  (* creating the graphics window*)
-  Graphics.open_graph (Printf.sprintf " %dx%d" initial_heigth initial_width);
-  (* calculating !scale*)
-  let max_coords = max_coordinates obstacles path in
-  let scale_x = float_of_int initial_width /. max_coords.x in 
-  let scale_y = float_of_int initial_heigth /. max_coords.y in 
-  scale := if scale_x > scale_y then scale_y else scale_x;
+  try
+    (* creating the graphics window*)
+    Graphics.open_graph (Printf.sprintf " %dx%d" initial_heigth initial_width);
+    (* calculating !scale*)
+    let max_coords = max_coordinates obstacles path in
+    let scale_x = float_of_int initial_width /. max_coords.x in 
+    let scale_y = float_of_int initial_heigth /. max_coords.y in 
+    scale := if scale_x > scale_y then scale_y else scale_x;
 
-  (* Plotting figures*)
-  draw_obstacles obstacles;
-  draw_path path;
+    (* Plotting figures*)
+    draw_obstacles obstacles;
+    draw_path path;
 
-  (* Runing user interface loop *)
-  interactive ();;
+    (* Runing user interface loop *)
+    interactive ();
+  with
+    | Graphic_failure("fatal I/O error") -> print_string "\nh into the o into the e\n" (* Do nothing *)
+    (* Here goes the code handling the window being closed manually*)
+  
 
 (*--------functions used to set data at any time of the app execution------*)
 let set_data obstacles path = 

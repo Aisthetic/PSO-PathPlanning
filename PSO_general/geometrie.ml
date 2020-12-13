@@ -8,16 +8,30 @@ exception DroiteVerticale;;
 let epsilon = 10.**(-5.);;
 
 (* Fonction qui donne la distance entre deux points *)
-let distance = fun a b -> sqrt (((a.x -. b.x)*.(a.x -. b.x)) +. ((a.y -. b.y)*.(a.y -. b.y)));;
- 
+let distance = fun a b -> sqrt (((a.x -. b.x)**2.) +. ((a.y -. b.y)**2.));;
+
+(*let fonction_objectif = fun traj ->
+	let rec aux = fun lst acc ->
+		match lst with
+			|[] -> acc
+			|(a,b)::q -> aux q (acc +. (distance a b))
+	in aux traj 0.;;
+;; Juste pour pas avoir d'erreur, prendre fonction Caro*)
+
+(*let fonction_objectif = fun traj ->
+	let n = Array.length traj in
+	let d = ref 0. in 
+	for i = 0 to (n-1) do 
+		let a,b = traj.(i) in
+		d := !d +. (distance a b)
+	done; 
+	!d;;*)
+
 
 
 (* POUR DEBUGGAGE A SUPPRIMER ENSUITE *)
 let print_point = fun p ->
 	print_string "("; print_float p.x; print_string ";"; print_float p.y; print_string ") ";;
-
-
-
 
 let mult_point pt coeff = {x=coeff *. pt.x; y=coeff *. pt.y};;
 
@@ -136,29 +150,3 @@ let trajectoire_ok = fun traj lst_obst ->
 			|_ when traverse -> traverse
 			|t::q -> f_aux q (ok_pour_un traj_seg t false)
 	in not (f_aux lst_obst false);;
-
-
-
-
-
-(* (*TEST TRAVAUX *)
-
-let obstacle = [[	{x=30.; y= 15.}; 
-					{x=70.; y=50.}; 
-					{x=34.; y= 52.}; 
-					{x=30.; y= 15.}]; 
-				[	{x=17.; y= 15.};
-					{x=27.; y= 15.};
-					{x=25.; y= 50.};
-					{x=10.; y= 57.}; 
-					{x=17.; y= 15.};]];;
-let traj = [{x=0.; y=0.};
-			{x= -134.; y= -0.3};
-			{x= -66.; y= -6.5};
-			{x= 12.8; y= 42.7};
-			{x= 54.; y= 34.3};
-			{x= 54.6; y= 20.};
-			{x= 80.; y= 60.}];;
-
-
-if (trajectoire_ok traj obstacle) then print_string "je suis un algo debile" else print_string "je fonctionne";; *)

@@ -14,4 +14,4 @@ PSO_avion_deterministe : (position des obstacles connue dans le temps)
 Modules_communs : (les modules communs a plus de 2 dossiers)
 	geometrie -> contient les fonctions concernant la trajectoire et les obstacles
 	gui -> notre interface graphique
-	utility -> les fonctions de debugage (notamment print)
+	Utility_print -> les fonctions de debugage (notamment print)

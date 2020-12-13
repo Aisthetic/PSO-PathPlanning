@@ -1,4 +1,13 @@
 type point = {x : float; y : float};;	
+type particule = 
+	{position : float array; 
+	vitesse : float array; 
+	meilleur : float array};;
+(* ce type regroupe les données nécessaire pour un obstacle dynamique à savoir position et vitesse*)
+type obstacle = {sommets : point array; vitesse : float*float };;
+
+(* un etat donne la position de tout les obstacles à un instant t*)
+type etat = {t : float; obstacles : obstacle array};;
 
 exception DroitesParalleles;;
 
@@ -150,3 +159,11 @@ let trajectoire_ok = fun traj lst_obst ->
 			|_ when traverse -> traverse
 			|t::q -> f_aux q (ok_pour_un traj_seg t false)
 	in not (f_aux lst_obst false);;
+
+(* fonction qui deplace un obstacle*)
+let deplacer_obstacle = fun dx dy obstacle  ->
+	let copie_obstacle = Array.copy obstacle in
+	for i = 0 to ((Array.length copie_obstacle)-1) do
+		copie_obstacle.(i) <- {x =  (obstacle.(i).x +. dx); y = (obstacle.(i).y +. dy)};
+	done;
+	copie_obstacle;;
