@@ -1,9 +1,9 @@
 open Geometrie
 open Initialisation_avion
 
-let n = 500;; 					(*Nombre de particules*) 
-let nb = 5;;					(*Nombre de points*)
-let iterMax = 1000;;	 			(*Nombre d'itération max*)
+let n = 50;; 					(*Nombre de particules*) 
+let nb = 2;;					(*Nombre de points*)
+let iterMax = 100000;;	 			(*Nombre d'itération max*)
 let epsilon = 0.001;; 			(*Précision de la variation de vitesse*)
 let w = 0.72;; 					(*Inertie*)
 let c1 = 1.;; 					(*Indice de confiance cognitive*)

@@ -1,6 +1,6 @@
 (* This module contains the functions needed to generate a swarm and to display it *)
-open Geometrie
 
+open Geometrie	
 type point = Geometrie.point;;
 type particule = 
 	{position : float array; 
@@ -60,9 +60,9 @@ let copie_tab = fun tab ->
 (* genère une particule*)
 let gen_particule = fun nb p_obj xmax vmax obstacle->
 	let pos_init = ref (generation_traj nb xmax p_obj) in
-	while not (Geometrie.trajectoire_ok (array_to_point !pos_init) obstacle) do 
+	(*while not (Geometrie.trajectoire_ok (array_to_point !pos_init) obstacle) do 
 		pos_init := (generation_traj nb xmax p_obj)
-	done;
+	done;*)
 	{position = (copie_tab !pos_init); vitesse = generation_speed nb vmax; meilleur = (copie_tab !pos_init)};; 
 
 
