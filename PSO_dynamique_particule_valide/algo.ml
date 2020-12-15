@@ -216,7 +216,7 @@ let maj_meilleur_global particules g =
 let algo = fun _ -> 						
 	let particules = genere_particules n nb p_obj xmax vmax obstacle in 				
 	let rec particleswarm = fun particules cmpt var_vitesse vitesse_moy g ->
-		if (cmpt > iterMax (* || (var_vitesse < epsilon) *))  
+		if (cmpt > iterMax || (var_vitesse < epsilon) )  
 		then 
 			begin 
 				print_string "\nmeilleure trajectoire trouvee : \n";

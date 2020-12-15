@@ -57,15 +57,14 @@ let modulo_float = fun nombre diviseur ->
 	!compt;;
 
 
-
+(* determine si le segment entre last et new est valide entre les temps temps_passe et temps_traj *)
 let valide = fun last_point new_point obstacle_mvt vitesse_avion temps_passe pas ->
 	let a = (float_array_to_point_array last_point).(0) in
 	let b = (float_array_to_point_array new_point).(0) in
 	let temps_traj = (Geometrie.distance a b) /. vitesse_avion in
 	let t_tot = temps_passe +. temps_traj in
-	let rang_depart = modulo_float temps_passe pas in
-	let rang_arrivee = modulo_float t_tot pas in
-	let distance_intermediaire_x = abs_float (a.x -. b.x) /. pas in
+	let rang_depart = modulo_float temps_passe pas in (* l'indice de temps discretisé lors du passage de l'avion au point last *)
+	let rang_arrivee = modulo_float t_tot pas in (* indice de temps discretisé lors du passage au point new *)
 	let a_intermediaire = ref a in
 	let b_intermediaire = ref {Geometrie.x = (!a_intermediaire.x +. b.x /. (float_of_int (rang_arrivee - rang_depart)));
 										 y = (!a_intermediaire.y +. b.y /. (float_of_int (rang_arrivee - rang_depart)))} in
