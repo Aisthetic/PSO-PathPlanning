@@ -26,4 +26,4 @@ let gen_etats = fun obstacles pas_temps nombre_etats  ->
 			gen_etats_rec (Array.append etats [| { t = temps ; obstacles = Array.map (calculer_nouveau_obstacle temps) obstacles } |]) (nb_etats+1) in 
     gen_etats_rec [||] 0;;
 
-
+    
