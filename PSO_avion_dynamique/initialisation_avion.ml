@@ -10,10 +10,6 @@ Random.self_init ();;
 
 
 (*pour aller plus loin : trouver une méthode pour ne pas faire appel aux array.append *)
-
-
-
-
 (* génère un point aléatoire de dimaesion 2 avec p les coordonnées maximales *)
 let gen_point = fun xmax ->
 	[|Random.float xmax; Random.float xmax|]  (*REGARDER POUR TRONQUER UN FLOTTANT*)

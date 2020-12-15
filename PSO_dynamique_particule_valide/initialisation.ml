@@ -74,8 +74,8 @@ let valide = fun last_point new_point obstacle_mvt vitesse_avion temps_passe pas
 		a_intermediaire := !b_intermediaire;
 		b_intermediaire := {Geometrie.x = (!a_intermediaire.x +. b.x /. (float_of_int (rang_arrivee - rang_depart)));
 										 y = (!a_intermediaire.y +. b.y /. (float_of_int (rang_arrivee - rang_depart)))};
-		let sommets_dobstacle (obs : obstacle) : float list = obs.sommets; (* prend un obstacle et renvoie ses sommets *)
-		test := (!test && (Geometrie.trajectoire_ok [!a_intermediaire;!b_intermediaire] (Array.map sommets_dobstacle obstacle_mvt.(!i).obstacles )));
+		let sommets_dobstacle (obs : obstacle) : float list = obs.sommets in (* prend un obstacle et renvoie ses sommets *)
+		test := (!test && (Geometrie.trajectoire_ok [!a_intermediaire;!b_intermediaire] (Array.map sommets_dobstacle obstacle_mvt.(!i).obstacles ) ));
 		i := !i +1;
 	done;
 	!test;;
@@ -95,7 +95,7 @@ let generation_traj = fun nb xmax p_obj obstacle_mvt vitesse_avion pas-> (*G√©n√
 				new_point := gen_point xmax;
 			done;
 			rec_gen (Array.append trajectoire new_point) (increment+1) !gen_point
-	in rec_gen ([| 0.; 0.|]) 0 [|0.;0.];;	
+	in rec_gen ([| 0.; 0.|]) 0 [|0.;0.|];;	
 
 
 
