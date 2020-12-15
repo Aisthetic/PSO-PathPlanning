@@ -3,6 +3,7 @@ type particule =
 	{position : float array; 
 	vitesse : float array; 
 	meilleur : float array};;
+
 (* ce type regroupe les données nécessaire pour un obstacle dynamique à savoir position et vitesse*)
 type obstacle = {sommets : point array; vitesse : float*float };;
 
@@ -135,7 +136,7 @@ let croise_obstacle = fun seg obst ->
 	let rec f_aux = fun lst test -> (*On regarde si le segment croise un de ceux composant l'obstacle*)
 		match lst with
 			|[] -> test
-			|t::q when test ->  test
+			|t::q when test -> test
 			|t::q -> let tst = (croise_segment seg t) in f_aux q tst
 	in f_aux lst_segments false;;
 

@@ -27,3 +27,11 @@ let point_to_array points_list =
 		[] -> tab|
 		t :: q -> point_to_array_rec q (Array.append tab [| [| t.x ; t.y|] |]) in
 	point_to_array_rec points_list [||];;
+
+let point_array_to_floatll points_array = 
+	let points_list = Array.to_list points_array in 
+	let rec point_array_to_floatll_rec = fun lst tab ->
+			match lst with 
+			[] -> tab|
+			t :: q -> point_to_array_rec q (List.append tab [ [ t.x ; t.y] ]) in
+		point_to_array_rec points_list [];;
