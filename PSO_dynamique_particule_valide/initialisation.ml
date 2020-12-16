@@ -74,7 +74,6 @@ let valide = fun last_point new_point obstacle_mvt vitesse_avion temps_passe pas
 		a_intermediaire := !b_intermediaire;
 		b_intermediaire := {Geometrie.x = (!a_intermediaire.x +. b.x /. (float_of_int (rang_arrivee - rang_depart)));
 										 y = (!a_intermediaire.y +. b.y /. (float_of_int (rang_arrivee - rang_depart)))};
-		let sommets_dobstacle (obs : Geometrie.obstacle) : point list = Array.to_list obs.sommets in (* prend un obstacle et renvoie ses sommets *)
 		test := (!test && (Geometrie.trajectoire_ok [!a_intermediaire;!b_intermediaire] (Array.to_list (Array.map sommets_dobstacle obstacle_mvt.(!i).obstacles )) ));
 		i := !i +1;
 	done;
