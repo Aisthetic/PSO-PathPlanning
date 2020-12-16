@@ -2,10 +2,7 @@
 
 open Geometrie;;
 type point = Geometrie.point;;
-type particule = 
-	{position : float array; 
-	vitesse : float array; 
-	meilleur : float array};;
+type particule = Geometrie.particule
 
 
 type etat = Geometrie.etat;;
@@ -56,7 +53,7 @@ let modulo_float = fun nombre diviseur ->
 	done;
 	!compt;;
 
-
+(* a deplacer dans geometrie plus tard *)
 (* determine si le segment entre last et new est valide entre les temps temps_passe et temps_traj *)
 let valide = fun last_point new_point obstacle_mvt vitesse_avion temps_passe pas ->
 	let a = (float_array_to_point_array last_point).(0) in
@@ -78,7 +75,15 @@ let valide = fun last_point new_point obstacle_mvt vitesse_avion temps_passe pas
 		test := (!test && (Geometrie.trajectoire_ok [!a_intermediaire;!b_intermediaire] (Array.to_list (Array.map sommets_dobstacle obstacle_mvt.(!i).obstacles )) ));
 		i := !i +1;
 	done;
-	!test;;
+	(!test,t_tot);;
+
+let valide traj = fun trajectoire vitesse_avion pas obstacle_mvt nb_etats ->
+	let path = float_array_to_point_array trajectoire in
+	let resultat = ref (valide  [|0.;0.|] path.(1) obstacle_mvt vitesse_avion 0. pas) in
+	match !resultat with
+		|test, temps ->
+			while (test) do
+				resultat := valide
 
 
 
@@ -91,10 +96,14 @@ let generation_traj = fun nb xmax p_obj obstacle_mvt vitesse_avion pas-> (*GÃ©nÃ
 		if increment = nb then Array.append trajectoire ([|p_obj.Geometrie.x; p_obj.y|])
 		else
 			let new_point = ref (gen_point xmax) in
-			while not (valide last_point !new_point obstacle_mvt vitesse_avion temps_passe pas) do 
-				new_point := gen_point xmax;
-			done;
-			rec_gen (Array.append trajectoire new_point) (increment+1) !gen_point
+			let resultat = ref (valide [|0.;0.|] !new_point obstacle_mvt vitesse_avion 0. pas) in
+			match !resultat with
+				|test,temps ->
+						while not (test) do 
+							new_point := gen_point xmax;
+							resultat := valide last_point !new_point obstacle_mvt vitesse_avion temps pas;
+						done;
+			rec_gen (Array.append trajectoire !new_point) (increment+1) !new_point
 	in rec_gen ([| 0.; 0.|]) 0 [|0.;0.|];;	
 
 
