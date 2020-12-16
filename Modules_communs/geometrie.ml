@@ -5,15 +5,16 @@ type particule =
 	meilleur : float array};;
 
 (* ce type regroupe les données nécessaire pour un obstacle dynamique à savoir position et vitesse*)
-type obstacle = {sommets : point array; vitesse : float*float };;
+type obstacle = {sommets : float list; vitesse : float*float };;
 
 (* un etat donne la position de tout les obstacles à un instant t*)
-type etat = {t : float; obstacles : obstacle array};;
+type etat = {t : float; obstacles : float list list};;
 
 exception DroitesParalleles;;
 
 exception DroiteVerticale;;
 
+exception ObstacleIncorrect;;
 (* Donne la différence acceptable entre deux flottants *)
 let epsilon = 10.**(-5.);;
 
@@ -162,9 +163,11 @@ let trajectoire_ok = fun traj lst_obst ->
 	in not (f_aux lst_obst false);;
 
 (* fonction qui deplace un obstacle*)
-let deplacer_obstacle = fun dx dy obstacle  ->
-	let copie_obstacle = Array.copy obstacle in
-	for i = 0 to ((Array.length copie_obstacle)-1) do
-		copie_obstacle.(i) <- {x =  (obstacle.(i).x +. dx); y = (obstacle.(i).y +. dy)};
-	done;
-	copie_obstacle;;
+let deplacer_obstacle = fun dx dy sommets  ->
+	let rec dep_rec = fun _sommets sommets_deplace ->
+		match _sommets with 
+		[] -> sommets_deplace |
+		[p] -> raise ObstacleIncorrect |
+		x::y::q -> dep_rec q sommets_deplace@[ (x +. dx); (y +. dy)]
+	in
+	dep_rec sommets [];;

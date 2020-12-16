@@ -31,16 +31,29 @@ let print_swarm = fun swarm ->
 	print_string "\n";;
 
 let print_obstacle = fun obstacle ->
+<<<<<<< HEAD
 	print_string "forme :\n" ; Array.iter print_array (Utility_array.point_array_to_floataa (Array.to_list obstacle.sommets));
 	print_string "\nvitesse :\n" ; 
 	match obstacle.vitesse with vx, vy -> print_string "("; print_float vx; print_string ","; print_float vy; print_string ")\n";;
+=======
+	print_string "\nforme :\n" ; print_list obstacle.sommets;
+	print_string "vitesse :\n" ; 
+	match obstacle.vitesse with vx, vy -> print_string "("; print_float vx; print_string ","; print_float vy; print_string ")";;
+>>>>>>> 9f4e3c9acec5da0cfc85c4fc6af8e7062cd63f24
 
 let print_obstacles = fun obstacles ->
-	Array.iter print_obstacle obstacles;;
+	List.iter print_obstacle obstacles;;
+
+let print_obstacle_sommets = fun obstacle_sommets ->
+	print_string "\nSommets de l'obstacle:\n" ; print_list obstacle_sommets;
+	;;
+
+let print_obstacles_sommets = fun obstacles_sommets ->
+	List.iter print_obstacle_sommets obstacles_sommets;;
 
 let print_etat = fun etat ->
 	print_string "\ntemps :"; print_float etat.t; print_string "\n";
-	print_obstacles etat.obstacles;;
+	print_obstacles_sommets etat.obstacles;;
 
 let print_etats = fun etats ->
 	Array.iter print_etat etats;;
