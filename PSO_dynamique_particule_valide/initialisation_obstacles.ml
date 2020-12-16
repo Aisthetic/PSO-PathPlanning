@@ -12,7 +12,7 @@ type etat = Geometrie.etat
 
 let calculer_nouveau_obstacle = fun t obstacle ->
     let (dx, dy) = match obstacle.vitesse with vx,vy -> vx*.t, vy*.t in  
-    {sommets = Geometrie.deplacer_obstacle dx dy obstacle.sommets ; vitesse =  obstacle.vitesse }
+    Geometrie.deplacer_obstacle dx dy obstacle.sommets;;
 
 
 (* var gen_etats = obstacle arrray -> float -> int -> etat array  *)
@@ -23,7 +23,7 @@ let gen_etats = fun obstacles pas_temps nombre_etats  ->
         if nb_etats = nombre_etats then etats
 		else
             let temps = pas_temps*. float_of_int nb_etats in 
-			gen_etats_rec (Array.append etats [| { t = temps ; obstacles = Array.map (calculer_nouveau_obstacle temps) obstacles } |]) (nb_etats+1) in 
+			gen_etats_rec (Array.append etats [| { t = temps ; obstacles = List.map (calculer_nouveau_obstacle temps) obstacles } |]) (nb_etats+1) in 
     gen_etats_rec [||] 0;;
 
     

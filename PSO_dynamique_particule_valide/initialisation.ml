@@ -1,5 +1,5 @@
 (* This module contains the functions needed to generate a swarm and to display it *)
-
+open Utility_array;;
 open Geometrie;;
 type point = Geometrie.point;;
 type particule = Geometrie.particule
@@ -15,33 +15,11 @@ Random.self_init ();;
 (*pour aller plus loin : trouver une méthode pour ne pas faire appel aux array.append *)
 
 
-(*transforme un flaot array en point list*)
-let array_to_point tab = 
-	let len = Array.length tab in 
-	let lst = ref [] in
-	let i = ref (len-2) in 
-	while !i >= 0 do 
-		lst := {Geometrie.x = tab.(!i); y = tab.(!i+1)} :: !lst;
-		i := !i-2;
-	done;
-	!lst;;
-
 
 (* génère un point aléatoire de dimension 2 avec p les coordonnées maximales *)
 let gen_point = fun xmax ->
 	[|Random.float xmax; Random.float xmax|]  (*REGARDER POUR TRONQUER UN FLOTTANT*)
 
-
-(*Disponible dans algorithme; juste la pour developpement A SUPPRIMER *)
-let float_array_to_point_array float_array =
-	let len = Array.length float_array in
-	let point_array = Array.make (len/2) {Geometrie.x=0.;y=0.} in
-	let i = ref 0 in
-	while !i < (len/2) do 
-		point_array.(!i) <- {Geometrie.x=float_array.(2*(!i)); y=float_array.(2*(!i)+1)};
-		i := !i + 1;
-	done;
-	point_array;;
 
 
 let modulo_float = fun nombre diviseur ->
@@ -71,18 +49,25 @@ let valide = fun last_point new_point obstacle_mvt vitesse_avion temps_passe pas
 		a_intermediaire := !b_intermediaire;
 		b_intermediaire := {Geometrie.x = (!a_intermediaire.x +. b.x /. (float_of_int (rang_arrivee - rang_depart)));
 										 y = (!a_intermediaire.y +. b.y /. (float_of_int (rang_arrivee - rang_depart)))};
-		test := (!test && (Geometrie.trajectoire_ok [!a_intermediaire;!b_intermediaire] (Array.to_list (Array.map sommets_dobstacle obstacle_mvt.(!i).obstacles )) ));
+		test := (!test && (Geometrie.trajectoire_ok [!a_intermediaire;!b_intermediaire] obstacle_mvt.(!i).obstacles ));
 		i := !i +1;
 	done;
 	(!test,t_tot);;
 
-let valide traj = fun trajectoire vitesse_avion pas obstacle_mvt nb_etats ->
-	let path = float_array_to_point_array trajectoire in
-	let resultat = ref (valide  [|0.;0.|] path.(1) obstacle_mvt vitesse_avion 0. pas) in
-	match !resultat with
-		|test, temps ->
-			while (test) do
-				resultat := valide
+
+let valide_traj = fun trajectoire_totale vitesse_avion pas obstacle_mvt nb_etats ->
+	let path = float_array_to_point_array trajectoire_totale in
+	let test = ref true in
+	let temps = ref 0. in
+	let i = ref 0 in
+	while (!test && !i< Array.length path) do
+		let resultat = ref (valide [|path.(!i).x;path.(!i).y|] [|path.(!i+1).x;path.(!i+1).y|] obstacle_mvt vitesse_avion !temps pas) in
+		match !resultat with te,tps -> 
+								test := te;
+								temps := tps;
+		i := !i+1;
+	done;
+	!test;;
 
 
 
@@ -90,18 +75,20 @@ let valide traj = fun trajectoire vitesse_avion pas obstacle_mvt nb_etats ->
 
 (* génère un array de nb points de dimension 2 avec p_obj les limites *)
 (*Trajectoire commence forcément par 0,0 et termine par px,py*)
-let generation_traj = fun nb xmax p_obj obstacle_mvt vitesse_avion pas-> (*Génère une trajectoire*)
+let generation_traj = fun nb xmax p_obj obstacle_mvt vitesse_avion pas -> (*Génère une trajectoire*)
 	let rec rec_gen = fun trajectoire increment last_point->
 		if increment = nb then Array.append trajectoire ([|p_obj.Geometrie.x; p_obj.y|])
 		else
 			let new_point = ref (gen_point xmax) in
-			let resultat = ref (valide [|0.;0.|] !new_point obstacle_mvt vitesse_avion 0. pas) in
-			match !resultat with
-				|test,temps ->
-						while not (test) do 
-							new_point := gen_point xmax;
-							resultat := valide last_point !new_point obstacle_mvt vitesse_avion temps pas;
-						done;
+			let (test,temps) = match (valide last_point !new_point obstacle_mvt vitesse_avion 0. pas) with booleen, tps -> ref booleen, ref tps in
+			while not (!test) do
+				print_string "nouveau point";
+				new_point := gen_point xmax;
+				let resultat = ref (valide last_point !new_point obstacle_mvt vitesse_avion 0. pas) in
+				match !resultat with te,tps -> 
+										test := te;
+										temps := tps;
+			done;
 			rec_gen (Array.append trajectoire !new_point) (increment+1) !new_point
 	in rec_gen ([| 0.; 0.|]) 0 [|0.;0.|];;	
 

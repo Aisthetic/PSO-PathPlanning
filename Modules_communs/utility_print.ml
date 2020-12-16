@@ -31,7 +31,7 @@ let print_swarm = fun swarm ->
 	print_string "\n";;
 
 let print_obstacle = fun obstacle ->
-	print_string "forme :\n" ; Array.iter print_array (Utility_array.point_array_to_floataa (Array.to_list obstacle.sommets));
+	print_string "\nforme :\n" ; List.iter print_point obstacle.sommets;
 	print_string "\nvitesse :\n" ; 
 	match obstacle.vitesse with vx, vy -> print_string "("; print_float vx; print_string ","; print_float vy; print_string ")\n";;
 
@@ -39,14 +39,16 @@ let print_obstacles = fun obstacles ->
 	List.iter print_obstacle obstacles;;
 
 let print_obstacle_sommets = fun obstacle_sommets ->
-	print_string "\nSommets de l'obstacle:\n" ; print_list obstacle_sommets;
+	print_string "Sommets de l'obstacle:\n" ; List.iter print_point obstacle_sommets;
+	print_string "\n";
 	;;
 
 let print_obstacles_sommets = fun obstacles_sommets ->
 	List.iter print_obstacle_sommets obstacles_sommets;;
 
 let print_etat = fun etat ->
-	print_string "\ntemps :"; print_float etat.t; print_string "\n";
+	print_string "\ntemps :"; print_float etat.t; 
+	print_string "\n";
 	print_obstacles_sommets etat.obstacles;;
 
 let print_etats = fun etats ->

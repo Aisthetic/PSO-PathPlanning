@@ -5,10 +5,10 @@ type particule =
 	meilleur : float array};;
 
 (* ce type regroupe les données nécessaire pour un obstacle dynamique à savoir position et vitesse*)
-type obstacle = {sommets : float list; vitesse : float*float };;
+type obstacle = {sommets : point list; vitesse : float*float };;
 
 (* un etat donne la position de tout les obstacles à un instant t*)
-type etat = {t : float; obstacles : float list list};;
+type etat = {t : float; obstacles : point list list};;
 
 exception DroitesParalleles;;
 
@@ -167,7 +167,6 @@ let deplacer_obstacle = fun dx dy sommets  ->
 	let rec dep_rec = fun _sommets sommets_deplace ->
 		match _sommets with 
 		[] -> sommets_deplace |
-		[p] -> raise ObstacleIncorrect |
-		x::y::q -> dep_rec q sommets_deplace@[ (x +. dx); (y +. dy)]
+		p::q -> dep_rec q sommets_deplace@[ {x=(p.x +. dx); y=(p.y +. dy)}]
 	in
 	dep_rec sommets [];;
