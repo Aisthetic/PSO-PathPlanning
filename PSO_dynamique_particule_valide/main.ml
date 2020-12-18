@@ -21,11 +21,12 @@ let obstacle1 = {sommets= [ {x=10.; y=10.};
 				vitesse= (10.,10.)};;
 
 let mvt = gen_etats [obstacle1] 1. 10;;
-print_etats mvt;;
+(* print_etats mvt;; *)
 
-let obs = Array.map Array.of_list (Array.of_list mvt.(0).obstacles);;
+let conv mvt = Array.map Array.of_list (Array.of_list mvt.obstacles);;
+let obs_animated = Array.map conv mvt;;
 
 let swarm = gen_swarm 1 2 p_obj xmax vmax mvt 20. 1.;;
+let swarm_animated = Array.make (Array.length obs_animated) (float_array_to_point_array swarm.(0).position);;
 print_swarm swarm;;
-
-create obs (float_array_to_point_array swarm.(0).position);;
+Gui.create_animated obs_animated swarm_animated 1.0;;

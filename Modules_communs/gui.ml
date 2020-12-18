@@ -59,9 +59,21 @@ let draw_obstacles r =
 (* Creates a loop for the interface to keep running*)
 (* And catches keyboard evens *)
 let rec interactive () =
+
   let event = wait_next_event [Key_pressed] in
   if event.key == 'q' then exit 0 
   else print_char event.key; print_newline (); interactive ();;
+
+let interactive_animated obstacles_over_time path_over_time time_pitch =
+  let length = min (Array.length obstacles_over_time) (Array.length path_over_time) in
+  for i = 0 to length-1 do
+    Graphics.clear_graph ();
+    draw_obstacles obstacles_over_time.(i); 
+    draw_path path_over_time.(i);
+    Unix.sleepf time_pitch; 
+  done;
+  interactive ();;
+  
 
 (* creates a graphics window with it's main loop*)
 let create () = 
@@ -104,6 +116,25 @@ let create obstacles path =
     | Graphic_failure("fatal I/O error") -> print_string "\nh into the o into the e\n" (* Do nothing *)
     (* Here goes the code handling the window being closed manually*)
   
+(* prends en parametre des données dépendantes du temps *)
+(* et affiche une animation des données *)
+let create_animated obstacles_over_time path_over_time time_pitch = 
+  print_string "\n--------Starting animation !-----------\n";
+  try
+    (* creating the graphics window*)
+    Graphics.open_graph (Printf.sprintf " %dx%d" initial_heigth initial_width);
+    (* calculating !scale*)
+    let max_coords = max_coordinates obstacles_over_time.(0)  path_over_time.(0) in
+    let scale_x = float_of_int initial_width /. max_coords.x in 
+    let scale_y = float_of_int initial_heigth /. max_coords.y in 
+    scale := if scale_x > scale_y then scale_y else scale_x;
+
+    (* Runing user interface loop *)
+    interactive_animated obstacles_over_time path_over_time time_pitch;
+  with
+    | Graphic_failure("fatal I/O error") -> print_string "\nh into the o into the e\n" (* Do nothing *)
+    (* Here goes the code handling the window being closed manually*)
+
 
 (*--------functions used to set data at any time of the app execution------*)
 let set_data obstacles path = 
