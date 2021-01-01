@@ -41,18 +41,45 @@ let valide = fun last_point new_point obstacle_mvt vitesse_avion temps_passe pas
 	let rang_depart = modulo_float temps_passe pas in (* l'indice de temps discretisé lors du passage de l'avion au point last *)
 	let rang_arrivee = modulo_float t_tot pas in (* indice de temps discretisé lors du passage au point new *)
 	let a_intermediaire = ref a in
-	let b_intermediaire = ref {Geometrie.x = (!a_intermediaire.x +. b.x /. (float_of_int (rang_arrivee - rang_depart)));
-										 y = (!a_intermediaire.y +. b.y /. (float_of_int (rang_arrivee - rang_depart)))} in
+	let b_intermediaire = ref {Geometrie.x = (!a_intermediaire.x +. (b.x -. a.x) /. (float_of_int (rang_arrivee - rang_depart)));
+										 y = (!a_intermediaire.y +. (b.y -. a.y) /. (float_of_int (rang_arrivee - rang_depart)))} in
 	let test = ref true in
 	let i = ref rang_depart in
 	while (!test && !i<=rang_arrivee) do
 		a_intermediaire := !b_intermediaire;
-		b_intermediaire := {Geometrie.x = (!a_intermediaire.x +. b.x /. (float_of_int (rang_arrivee - rang_depart)));
-										 y = (!a_intermediaire.y +. b.y /. (float_of_int (rang_arrivee - rang_depart)))};
-		test := (!test && (Geometrie.trajectoire_ok [!a_intermediaire;!b_intermediaire] obstacle_mvt.(!i).obstacles ));
+		b_intermediaire := {Geometrie.x = (!a_intermediaire.x +. (b.x -. a.x) /. (float_of_int (rang_arrivee - rang_depart)));
+										 y = (!a_intermediaire.y +. (b.y -. a.y) /. (float_of_int (rang_arrivee - rang_depart)))};
+		test := (!test && (Geometrie.trajectoire_ok [!a_intermediaire;!b_intermediaire] obstacle_mvt.(!i+1).obstacles ));
 		i := !i +1;
 	done;
 	(!test,t_tot);;
+
+
+
+
+(* version recursive de valide*)
+let valide2 = fun last_point new_point obstacle_mvt vitesse_avion temps_passe pas ->
+	let a = (float_array_to_point_array last_point).(0) in
+	let b = (float_array_to_point_array new_point).(0) in
+	let temps_traj = (Geometrie.distance a b) /. vitesse_avion in
+	let t_tot = temps_passe +. temps_traj in
+	let rang_depart = modulo_float temps_passe pas in (* l'indice de temps discretisé lors du passage de l'avion au point last *)
+	let rang_arrivee = modulo_float t_tot pas in (* indice de temps discretisé lors du passage au point new *)
+	let a_intermediaire = a in
+	let b_intermediaire = {Geometrie.x = (a_intermediaire.x +. (b.x -. a.x) /. (float_of_int (rang_arrivee - rang_depart)));
+										 y = (a_intermediaire.y +. (b.y -. a.y) /. (float_of_int (rang_arrivee - rang_depart)))} in
+	let rec rec_valide = fun rang test pta ptb ->
+ 		match test with
+ 		|_ if (not test || rang > rang_arrivee) -> test
+ 		|_ ->
+ 			let new_a = ptb in 
+			let new_b = {Geometrie.x = (ptb.x +. (b.x -. a.x) /. (float_of_int (rang_arrivee - rang_depart)));
+										 y = (ptb.y +. (b.y -. a.y) /. (float_of_int (rang_arrivee - rang_depart)))} in
+		 	let new_test = Geometrie.trajectoire_ok [new_a;new_b] obstacle_mvt.(rang+1).obstacles in
+		 	rec_valide (rang+1) new_test new_a new_b;
+ 	in
+ 	let test = (Geometrie.trajectoire_ok [a_intermediaire;b_intermediaire] obstacle_mvt.(rang_depart).obstacles) && (rec_valide rang_depart true a_intermediaire b_intermediaire) in
+ 	(test,t_tot);;
 
 
 let valide_traj = fun trajectoire_totale vitesse_avion pas obstacle_mvt nb_etats ->
@@ -68,6 +95,17 @@ let valide_traj = fun trajectoire_totale vitesse_avion pas obstacle_mvt nb_etats
 		i := !i+1;
 	done;
 	!test;;
+
+let valide_traj2 = fun trajectoire_totale vitesse_avion pas obstacle_mvt nb_etats ->
+	let path = float_array_to_point_array trajectoire_totale in
+	let rec rec_valide_traj = fun test i temps->
+		match test with
+		|_ if (not test || i>Array.length path) -> test
+		|_ ->
+			let (new_test, new_tps) = valide [|path.(i).x;path.(i).y|] [|path.(i+1).x;path.(i+1).y|] obstacle_mvt vitesse_avion temps pas in
+			rec_valide_traj new_test (i+1) new_tps;
+	in
+	rec_valide_traj true 0 0.;;
 
 
 
